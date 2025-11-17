@@ -1,0 +1,44 @@
+{
+  "code": "lamborghini",
+  "name": "Lamborghini",
+  "brandColor": "#d8a016",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#d8a016",
+      "textColor": "#000000",
+      "hoverBackgroundColor": "#000000",
+      "hoverTextColor": "#d8a016",
+      "borderColor": "#d8a016",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#d8a016",
+      "hoverBackgroundColor": "#d8a016",
+      "hoverTextColor": "#000000",
+      "borderColor": "#d8a016",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

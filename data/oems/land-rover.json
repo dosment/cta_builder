@@ -1,0 +1,44 @@
+{
+  "code": "land-rover",
+  "name": "Land Rover",
+  "brandColor": "#0C121C",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#0C121C",
+      "textColor": "#ffffff",
+      "hoverBackgroundColor": "#ffffff",
+      "hoverTextColor": "#0C121C",
+      "borderColor": "#0C121C",
+      "borderRadius": "0px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#0C121C",
+      "hoverBackgroundColor": "#0C121C",
+      "hoverTextColor": "#ffffff",
+      "borderColor": "#0C121C",
+      "borderRadius": "0px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

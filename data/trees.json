@@ -1,0 +1,105 @@
+{
+  "trees": [
+    {
+      "category": "confirm_availability",
+      "label": "Check Availability",
+      "options": [
+        { "id": "CHECK_AVAILABILITY_2022UPDATED", "label": "Check Availability 2022 Updated" },
+        { "id": "CN_CONFIRM_AVAILABILITY", "label": "CN Confirm Availability" },
+        { "id": "AUTONISSAN_CHECK_DR_FINAL_3", "label": "AutoNissan Check DR Final 3" },
+        { "id": "YARK_AVAILABILITY_NO_DR", "label": "Yark Availability (No DR)" },
+        { "id": "AMSI_CHECK_AVAILABILITY_DR", "label": "AMSI Check Availability DR" },
+        { "id": "2000_V2_LHN_CONFIRM", "label": "2000 V2 LHN Confirm (LHN-enabled)" },
+        { "id": "CONVERT_CONFIRM_AVAILABILITY", "label": "Convert - Confirm Availability" }
+      ]
+    },
+    {
+      "category": "test_drive",
+      "label": "Schedule Test Drive",
+      "options": [
+        { "id": "1000_V2_TEST_DRIVE", "label": "1000 V2 Test Drive" },
+        { "id": "3000_V2_TEST_DRIVE_DR", "label": "3000 V2 Test Drive DR" },
+        { "id": "3000_V2_TEST_DRIVE", "label": "3000 V2 Test Drive" },
+        { "id": "CONVERT_TEST_DRIVE", "label": "Convert - Test Drive" },
+        { "id": "AMSI_3000_V2_TEST_DRIVE_DR", "label": "AMSI 3000 V2 Test Drive DR" },
+        { "id": "2000_V2_DN_TEST_DRIVE", "label": "2000 V2 DN Test Drive (LHN/DealNow)" }
+      ]
+    },
+    {
+      "category": "eprice",
+      "label": "E-Price / Get E-Price",
+      "options": [
+        { "id": "1000_V2_EPRICE", "label": "1000 V2 E-Price" },
+        { "id": "3000_V2_EPRICE_DR", "label": "3000 V2 E-Price DR" },
+        { "id": "CONVERT_E_PRICE", "label": "Convert - E-Price" },
+        { "id": "E_PRICE_SF_HD", "label": "E-Price SF HD" },
+        { "id": "3000_V2_EPRICE_DR_MCD", "label": "3000 V2 E-Price DR MCD" },
+        { "id": "LOWE_EPRICE_DR", "label": "Lowe E-Price DR" },
+        { "id": "2000_V2_DN_EPRICE", "label": "2000 V2 DN E-Price (LHN/DealNow)" }
+      ]
+    },
+    {
+      "category": "credit",
+      "label": "Pre-Qualify / Credit",
+      "options": [
+        { "id": "1000_V2_CREDIT", "label": "1000 V2 Credit" },
+        { "id": "3000_V2_CREDIT_DR", "label": "3000 V2 Credit DR" },
+        { "id": "CONVERT_PREQUALIFY", "label": "Convert - Pre-Qualify" },
+        { "id": "AMSI_3000_V2_CREDIT_DR", "label": "AMSI 3000 V2 Credit DR" },
+        { "id": "PREQUAL_SCHEDULE", "label": "Pre-Qual Schedule" }
+      ]
+    },
+    {
+      "category": "trade",
+      "label": "Value Trade / Sell Us Your Car",
+      "options": [
+        { "id": "1000_V2_TRADE_TRIM", "label": "1000 V2 Trade Trim" },
+        { "id": "3000_V2_TRADE_TRIM_DR", "label": "3000 V2 Trade Trim DR" },
+        { "id": "VINCUE_TRADE_DR", "label": "Vincue Trade DR" },
+        { "id": "TRADE_VISIT", "label": "Trade Visit" },
+        { "id": "CONVERT_VALUE_TRADE", "label": "Convert - Value Trade" },
+        { "id": "DN_TRADE_TREE", "label": "DN Trade Tree" },
+        { "id": "Trade_APP", "label": "Trade App" },
+        { "id": "2000_V2_DN_TRADE_TRIM", "label": "2000 V2 DN Trade Trim (LHN/DealNow)" }
+      ]
+    }
+  ],
+  "departments": [
+    {
+      "id": 2844,
+      "label": "Schedule Test Drive - 2844",
+      "category": "test_drive",
+      "isStandard": true
+    },
+    {
+      "id": 2845,
+      "label": "E-Price / Get E-Price - 2845",
+      "category": "eprice",
+      "isStandard": true
+    },
+    {
+      "id": 3346,
+      "label": "Value Trade / Trade - 3346",
+      "category": "trade",
+      "isStandard": true
+    },
+    {
+      "id": 3347,
+      "label": "Pre-Qualify / Credit - 3347",
+      "category": "credit",
+      "isStandard": true
+    },
+    {
+      "id": "custom",
+      "label": "Custom Department Number",
+      "category": "all",
+      "isStandard": false,
+      "note": "For Confirm Availability or dealer-specific routing"
+    }
+  ],
+  "notes": {
+    "confirm_availability": "Confirm Availability does not have a universal dept ID. Use dealer-specific or group-consistent department for routing.",
+    "credit": "Credit/Pre-Qualify has no 2000 (DN) tree variant per official tree guide.",
+    "custom_dept": "Custom department numbers should be used for Confirm Availability or dealer-specific requirements."
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "code": "cadillac",
+  "name": "Cadillac",
+  "brandColor": "#fa0037",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#fa0037",
+      "textColor": "#ffffff",
+      "hoverBackgroundColor": "#ffffff",
+      "hoverTextColor": "#fa0037",
+      "borderColor": "#fa0037",
+      "borderRadius": "0px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#fa0037",
+      "hoverBackgroundColor": "#fa0037",
+      "hoverTextColor": "#ffffff",
+      "borderColor": "#fa0037",
+      "borderRadius": "0px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

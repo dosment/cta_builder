@@ -1,0 +1,44 @@
+{
+  "code": "toyota",
+  "name": "Toyota",
+  "brandColor": "#EB0A1E",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#EB0A1E",
+      "textColor": "#ffffff",
+      "hoverBackgroundColor": "#ffffff",
+      "hoverTextColor": "#EB0A1E",
+      "borderColor": "#EB0A1E",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#EB0A1E",
+      "hoverBackgroundColor": "#EB0A1E",
+      "hoverTextColor": "#ffffff",
+      "borderColor": "#EB0A1E",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

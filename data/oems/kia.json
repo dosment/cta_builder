@@ -1,0 +1,44 @@
+{
+  "code": "kia",
+  "name": "Kia",
+  "brandColor": "#05141F",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#05141F",
+      "textColor": "#ffffff",
+      "hoverBackgroundColor": "#ffffff",
+      "hoverTextColor": "#05141F",
+      "borderColor": "#05141F",
+      "borderRadius": "15px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#05141F",
+      "hoverBackgroundColor": "#05141F",
+      "hoverTextColor": "#ffffff",
+      "borderColor": "#05141F",
+      "borderRadius": "15px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

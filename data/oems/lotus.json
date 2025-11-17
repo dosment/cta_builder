@@ -1,0 +1,44 @@
+{
+  "code": "lotus",
+  "name": "Lotus",
+  "brandColor": "#174222",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#174222",
+      "textColor": "#FBAA1E",
+      "hoverBackgroundColor": "#FBAA1E",
+      "hoverTextColor": "#174222",
+      "borderColor": "#174222",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#174222",
+      "hoverBackgroundColor": "#174222",
+      "hoverTextColor": "#FBAA1E",
+      "borderColor": "#174222",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

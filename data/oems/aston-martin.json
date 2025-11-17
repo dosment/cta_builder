@@ -1,0 +1,44 @@
+{
+  "code": "aston-martin",
+  "name": "Aston Martin",
+  "brandColor": "#0B2201",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#0B2201",
+      "textColor": "#ffffff",
+      "hoverBackgroundColor": "#ffffff",
+      "hoverTextColor": "#0B2201",
+      "borderColor": "#0B2201",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#0B2201",
+      "hoverBackgroundColor": "#0B2201",
+      "hoverTextColor": "#ffffff",
+      "borderColor": "#0B2201",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

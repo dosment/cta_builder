@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTA Builder - CarNow</title>
+    <link rel="stylesheet" href="styles/wizard.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>CarNow CTA Builder</h1>
+            <p class="subtitle">Generate custom CTA code for your dealership</p>
+        </header>
+
+        <div class="wizard-container">
+            <!-- Progress Indicator -->
+            <div class="progress-bar">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">OEM</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">CTAs</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Trees</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Styling</div>
+                </div>
+                <div class="progress-step" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Placement</div>
+                </div>
+                <div class="progress-step" data-step="6">
+                    <div class="step-number">6</div>
+                    <div class="step-label">Preview</div>
+                </div>
+            </div>
+
+            <!-- Step Content Area -->
+            <div class="step-content" id="step-content">
+                <!-- Step 1: OEM Selection -->
+                <div class="step" id="step-1">
+                    <h2>Select OEM Brand</h2>
+                    <p class="step-description">Choose the manufacturer for your dealership</p>
+                    <div class="form-group">
+                        <label for="oem-select">OEM Brand:</label>
+                        <select id="oem-select" class="form-control">
+                            <option value="">-- Select OEM --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: CTA Selection -->
+                <div class="step hidden" id="step-2">
+                    <h2>Choose CTAs</h2>
+                    <p class="step-description">Select which CTAs you want to include</p>
+                    <div id="cta-checkboxes" class="checkbox-group">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Step 3: Tree & Department Configuration -->
+                <div class="step hidden" id="step-3">
+                    <h2>Configure Trees & Departments</h2>
+                    <p class="step-description">Set up tree and department routing for each CTA</p>
+                    <div id="tree-config-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Step 4: Styling Configuration -->
+                <div class="step hidden" id="step-4">
+                    <h2>Style Your CTAs</h2>
+                    <p class="step-description">Customize the appearance of each CTA</p>
+                    <div id="styling-config-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Step 5: Placement Configuration -->
+                <div class="step hidden" id="step-5">
+                    <h2>Set Placement</h2>
+                    <p class="step-description">Configure where CTAs appear (SRP/VDP)</p>
+                    <div id="placement-config-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Step 6: Preview & Export -->
+                <div class="step hidden" id="step-6">
+                    <h2>Preview & Export Code</h2>
+                    <p class="step-description">Preview your CTAs and copy the generated code</p>
+
+                    <div class="preview-container">
+                        <h3>Live Preview</h3>
+                        <div id="preview-area" class="preview-area">
+                            <!-- Live preview of CTAs -->
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <h3>Generated Code</h3>
+                        <div class="code-actions">
+                            <button id="copy-code-btn" class="btn btn-secondary">Copy to Clipboard</button>
+                        </div>
+                        <pre id="generated-code" class="code-output"><code></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="wizard-nav">
+                <button id="prev-btn" class="btn btn-secondary" disabled>Previous</button>
+                <button id="next-btn" class="btn btn-primary">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="src/state.js"></script>
+    <script type="module" src="src/utils.js"></script>
+    <script type="module" src="src/wizard.js"></script>
+    <script type="module" src="src/generator.js"></script>
+</body>
+</html>

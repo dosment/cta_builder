@@ -1,0 +1,133 @@
+{
+  "personalize_payment": {
+    "default": "Personalize My Payment",
+    "options": [
+      "Personalize My Payment",
+      "Explore My Payments",
+      "Get My Payment",
+      "Build My Deal",
+      "See My Options",
+      "Digital Retailing"
+    ],
+    "supportsDeeplink": true,
+    "requiresTree": false,
+    "deeplinkSteps": [
+      { "id": "trade-in", "label": "Trade-In" },
+      { "id": "credit", "label": "Credit" },
+      { "id": "payments", "label": "Payments" },
+      { "id": "documents", "label": "Documents" },
+      { "id": "protection-products", "label": "Protection Products" },
+      { "id": "credit-application", "label": "Credit Application" },
+      { "id": "appointment", "label": "Schedule Appointment" },
+      { "id": "delivery", "label": "Home Delivery" },
+      { "id": "deposit", "label": "Deposit" }
+    ]
+  },
+  "confirm_availability": {
+    "default": "Confirm Availability",
+    "options": [
+      "Confirm Availability",
+      "Check Availability",
+      "Is This Available?",
+      "Reserve Now"
+    ],
+    "supportsDeeplink": true,
+    "requiresTree": true,
+    "treeCategory": "confirm_availability",
+    "deeplinkSteps": [
+      { "id": "trade-in", "label": "Trade-In" },
+      { "id": "credit", "label": "Credit" },
+      { "id": "payments", "label": "Payments" }
+    ]
+  },
+  "value_trade": {
+    "default": "Value My Trade",
+    "options": [
+      "Value My Trade",
+      "Value Your Trade",
+      "Get Trade Value",
+      "Trade Appraisal",
+      "Sell Us Your Car"
+    ],
+    "supportsDeeplink": true,
+    "requiresTree": true,
+    "treeCategory": "trade",
+    "standardDept": 3346,
+    "deeplinkSteps": [
+      { "id": "trade-in", "label": "Trade-In" }
+    ]
+  },
+  "test_drive": {
+    "default": "Schedule Test Drive",
+    "options": [
+      "Schedule Test Drive",
+      "Schedule a Test Drive",
+      "Book Test Drive",
+      "Test Drive"
+    ],
+    "supportsDeeplink": true,
+    "requiresTree": true,
+    "treeCategory": "test_drive",
+    "standardDept": 2844,
+    "deeplinkSteps": [
+      { "id": "appointment", "label": "Schedule Appointment" }
+    ]
+  },
+  "pre_qualify": {
+    "default": "Pre-Qualify",
+    "options": [
+      "Pre-Qualify",
+      "Get Pre-Qualified",
+      "Check My Credit",
+      "Pre-Qualification"
+    ],
+    "supportsDeeplink": true,
+    "requiresTree": true,
+    "treeCategory": "credit",
+    "standardDept": 3347,
+    "deeplinkSteps": [
+      { "id": "credit", "label": "Credit" },
+      { "id": "credit-application", "label": "Credit Application" }
+    ]
+  },
+  "eprice": {
+    "default": "Get E-Price",
+    "options": [
+      "Get E-Price",
+      "E-Price",
+      "See E-Price",
+      "Get My Price"
+    ],
+    "supportsDeeplink": true,
+    "requiresTree": true,
+    "treeCategory": "eprice",
+    "standardDept": 2845,
+    "deeplinkSteps": [
+      { "id": "payments", "label": "Payments" }
+    ]
+  },
+  "text_us": {
+    "default": "Text Us",
+    "options": [
+      "Text Us",
+      "TEXT US",
+      "Send Us a Text",
+      "Message Us"
+    ],
+    "supportsDeeplink": false,
+    "requiresTree": false,
+    "onclickPattern": "CarNowPlugin.showSmsContactForm(this,'cncb11_sms_form');return false;"
+  },
+  "chat_now": {
+    "default": "Chat Now",
+    "options": [
+      "Chat Now",
+      "CHAT NOW",
+      "Live Chat",
+      "Chat With Us"
+    ],
+    "supportsDeeplink": false,
+    "requiresTree": false,
+    "onclickPattern": "CarNowPlugin.launchChat(this, 200);return false;"
+  }
+}

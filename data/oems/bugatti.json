@@ -1,0 +1,44 @@
+{
+  "code": "bugatti",
+  "name": "Bugatti",
+  "brandColor": "#DB1C30",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#DB1C30",
+      "textColor": "#ffffff",
+      "hoverBackgroundColor": "#ffffff",
+      "hoverTextColor": "#DB1C30",
+      "borderColor": "#DB1C30",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#DB1C30",
+      "hoverBackgroundColor": "#DB1C30",
+      "hoverTextColor": "#ffffff",
+      "borderColor": "#DB1C30",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}

@@ -1,0 +1,44 @@
+{
+  "code": "infiniti",
+  "name": "INFINITI",
+  "brandColor": "#020B24",
+  "styles": {
+    "primary": {
+      "label": "Primary Filled",
+      "backgroundColor": "#020B24",
+      "textColor": "#B0A591",
+      "hoverBackgroundColor": "#B0A591",
+      "hoverTextColor": "#020B24",
+      "borderColor": "#020B24",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    },
+    "outline": {
+      "label": "Outline",
+      "backgroundColor": "transparent",
+      "textColor": "#020B24",
+      "hoverBackgroundColor": "#020B24",
+      "hoverTextColor": "#B0A591",
+      "borderColor": "#020B24",
+      "borderRadius": "4px",
+      "textTransform": "uppercase",
+      "fontSize": "16px",
+      "fontWeight": "bold",
+      "padding": "11px",
+      "marginTop": "6px",
+      "marginBottom": "0px",
+      "letterSpacing": "0.1em",
+      "borderWidth": "2px",
+      "transition": "all 0.3s ease"
+    }
+  },
+  "font": null
+}
