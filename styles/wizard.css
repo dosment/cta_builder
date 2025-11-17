@@ -417,6 +417,13 @@ select[id^="tree-"] option {
     transform: translateX(24px);
 }
 
+.toggle-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-700);
+    min-width: 65px;
+}
+
 /* Preview Area */
 .preview-container {
     margin-bottom: 30px;

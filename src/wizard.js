@@ -262,12 +262,21 @@ class Wizard {
             checked: config.useDeeplink
         });
 
-        checkbox.onchange = (e) => {
-            appState.updateCtaConfig(ctaType, { useDeeplink: e.target.checked });
-            this.renderTreeConfiguration(); // Re-render to show/hide fields
-        };
+        const toggleText = utils.createElement('span', {
+            className: 'toggle-text',
+            id: `deeplink-text-${ctaType}`
+        }, config.useDeeplink ? 'Enabled' : 'Disabled');
 
-        const toggleText = utils.createElement('span', {}, config.useDeeplink ? 'Enabled' : 'Disabled');
+        checkbox.onchange = (e) => {
+            const isEnabled = e.target.checked;
+            appState.updateCtaConfig(ctaType, { useDeeplink: isEnabled });
+
+            // Update toggle text
+            toggleText.textContent = isEnabled ? 'Enabled' : 'Disabled';
+
+            // Re-render to show/hide fields
+            this.renderTreeConfiguration();
+        };
 
         toggleSwitch.appendChild(checkbox);
         toggleSwitch.appendChild(toggleText);
