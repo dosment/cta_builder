@@ -4,7 +4,7 @@
   "brandColor": "#00adef",
   "styles": {
     "primary": {
-      "label": "Primary Filled",
+      "label": "Primary",
       "backgroundColor": "#00adef",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#186db6",
@@ -21,8 +21,8 @@
       "borderWidth": "2px",
       "transition": "all 0.3s ease"
     },
-    "outline": {
-      "label": "Outline",
+    "secondary": {
+      "label": "Secondary",
       "backgroundColor": "transparent",
       "textColor": "#00adef",
       "hoverBackgroundColor": "#00adef",

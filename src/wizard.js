@@ -88,6 +88,9 @@ class Wizard {
 
         // Update navigation buttons
         this.updateNavigationButtons(stepNumber);
+
+        // Update live preview
+        this.updateLivePreview();
     }
 
     updateProgressBar(stepNumber) {
@@ -176,7 +179,7 @@ class Wizard {
 
             const label = utils.createElement('label', {
                 for: `cta-${ctaType}`
-            }, ctaInfo.default);
+            }, ctaInfo.displayName || ctaInfo.default);
 
             checkbox.onchange = () => this.handleCtaSelectionChange();
 
@@ -193,6 +196,7 @@ class Wizard {
             .map(cb => cb.value);
 
         appState.setSelectedCtas(selectedCtas);
+        this.updateLivePreview();
     }
 
     // Step 3: Tree & Department Configuration
@@ -284,7 +288,7 @@ class Wizard {
             const option = utils.createElement('option', {
                 value: tree.id,
                 selected: config.tree === tree.id
-            }, tree.label);
+            }, tree.id); // Show tree ID instead of label
             treeSelect.appendChild(option);
         });
 
@@ -296,40 +300,9 @@ class Wizard {
         treeField.appendChild(treeSelect);
         row.appendChild(treeField);
 
-        // Department selector
-        const deptField = utils.createElement('div', { className: 'config-field' });
-        const deptLabel = utils.createElement('label', {}, 'Department:');
-        const deptSelect = utils.createElement('select', { id: `dept-${ctaType}` });
-
-        const deptDefaultOption = utils.createElement('option', { value: '' }, '-- Select Department --');
-        deptSelect.appendChild(deptDefaultOption);
-
-        const departments = appState.getDepartmentsForCategory(ctaInfo.treeCategory);
-        departments.forEach(dept => {
-            const deptValue = dept.id === 'custom' ? 'custom' : dept.id;
-            const option = utils.createElement('option', {
-                value: deptValue,
-                selected: config.dept === deptValue
-            }, dept.label);
-            deptSelect.appendChild(option);
-        });
-
-        deptSelect.onchange = (e) => {
-            const value = e.target.value;
-            if (value === 'custom') {
-                appState.updateCtaConfig(ctaType, { dept: 'custom' });
-                this.renderTreeConfiguration(); // Re-render to show custom input
-            } else {
-                appState.updateCtaConfig(ctaType, { dept: parseInt(value), customDept: null });
-            }
-        };
-
-        deptField.appendChild(deptLabel);
-        deptField.appendChild(deptSelect);
-        row.appendChild(deptField);
-
-        // Custom department input (if custom is selected)
-        if (config.dept === 'custom') {
+        // Department configuration - Confirm Availability is special (custom only)
+        if (ctaType === 'confirm_availability') {
+            // Only show custom dept input for Confirm Availability
             const customDeptField = utils.createElement('div', { className: 'config-field' });
             const customDeptLabel = utils.createElement('label', {}, 'Custom Dept #:');
             const customDeptInput = utils.createElement('input', {
@@ -340,12 +313,64 @@ class Wizard {
             });
 
             customDeptInput.oninput = (e) => {
-                appState.updateCtaConfig(ctaType, { customDept: parseInt(e.target.value) });
+                appState.updateCtaConfig(ctaType, { dept: 'custom', customDept: parseInt(e.target.value) });
             };
 
             customDeptField.appendChild(customDeptLabel);
             customDeptField.appendChild(customDeptInput);
             row.appendChild(customDeptField);
+        } else {
+            // Regular department selector for other CTAs
+            const deptField = utils.createElement('div', { className: 'config-field' });
+            const deptLabel = utils.createElement('label', {}, 'Department:');
+            const deptSelect = utils.createElement('select', { id: `dept-${ctaType}` });
+
+            const deptDefaultOption = utils.createElement('option', { value: '' }, '-- Select Department --');
+            deptSelect.appendChild(deptDefaultOption);
+
+            const departments = appState.getDepartmentsForCategory(ctaInfo.treeCategory);
+            departments.forEach(dept => {
+                const deptValue = dept.id === 'custom' ? 'custom' : dept.id;
+                const option = utils.createElement('option', {
+                    value: deptValue,
+                    selected: config.dept === deptValue
+                }, dept.label);
+                deptSelect.appendChild(option);
+            });
+
+            deptSelect.onchange = (e) => {
+                const value = e.target.value;
+                if (value === 'custom') {
+                    appState.updateCtaConfig(ctaType, { dept: 'custom' });
+                    this.renderTreeConfiguration(); // Re-render to show custom input
+                } else {
+                    appState.updateCtaConfig(ctaType, { dept: parseInt(value), customDept: null });
+                }
+            };
+
+            deptField.appendChild(deptLabel);
+            deptField.appendChild(deptSelect);
+            row.appendChild(deptField);
+
+            // Custom department input (if custom is selected)
+            if (config.dept === 'custom') {
+                const customDeptField = utils.createElement('div', { className: 'config-field' });
+                const customDeptLabel = utils.createElement('label', {}, 'Custom Dept #:');
+                const customDeptInput = utils.createElement('input', {
+                    type: 'number',
+                    id: `custom-dept-${ctaType}`,
+                    value: config.customDept || '',
+                    placeholder: 'Enter department number'
+                });
+
+                customDeptInput.oninput = (e) => {
+                    appState.updateCtaConfig(ctaType, { customDept: parseInt(e.target.value) });
+                };
+
+                customDeptField.appendChild(customDeptLabel);
+                customDeptField.appendChild(customDeptInput);
+                row.appendChild(customDeptField);
+            }
         }
 
         return row;
@@ -423,18 +448,16 @@ class Wizard {
         });
 
         // Custom option
+        const isCustom = config.customLabel && !ctaInfo.options.includes(config.customLabel);
         const customOption = utils.createElement('option', {
             value: '__custom__',
-            selected: config.customLabel && !ctaInfo.options.includes(config.customLabel)
-        }, 'Custom...');
+            selected: isCustom
+        }, 'Custom');
         labelSelect.appendChild(customOption);
 
         labelSelect.onchange = (e) => {
             if (e.target.value === '__custom__') {
-                const customLabel = prompt('Enter custom label:', config.customLabel || config.label);
-                if (customLabel) {
-                    appState.updateCtaConfig(ctaType, { customLabel });
-                }
+                appState.updateCtaConfig(ctaType, { customLabel: config.label });
                 this.renderStylingConfiguration();
             } else {
                 appState.updateCtaConfig(ctaType, { customLabel: null, label: e.target.value });
@@ -444,6 +467,26 @@ class Wizard {
         labelField.appendChild(labelLabel);
         labelField.appendChild(labelSelect);
         row.appendChild(labelField);
+
+        // Show custom text input if "Custom" is selected
+        if (labelSelect.value === '__custom__') {
+            const customLabelField = utils.createElement('div', { className: 'config-field' });
+            const customLabelLabel = utils.createElement('label', {}, 'Custom Label Text:');
+            const customLabelInput = utils.createElement('input', {
+                type: 'text',
+                id: `custom-label-${ctaType}`,
+                value: config.customLabel || '',
+                placeholder: 'Enter button text'
+            });
+
+            customLabelInput.oninput = (e) => {
+                appState.updateCtaConfig(ctaType, { customLabel: e.target.value });
+            };
+
+            customLabelField.appendChild(customLabelLabel);
+            customLabelField.appendChild(customLabelInput);
+            row.appendChild(customLabelField);
+        }
 
         return row;
     }
@@ -612,6 +655,21 @@ class Wizard {
 
             container.appendChild(button);
         });
+    }
+
+    // Update Live Preview Sidebar
+    updateLivePreview() {
+        const livePreviewArea = document.getElementById('live-preview-area');
+
+        // Check if we have the necessary data
+        if (!appState.data.oemData || appState.data.selectedCtas.length === 0) {
+            livePreviewArea.innerHTML = '<p class="text-muted">Select CTAs to see preview</p>';
+            return;
+        }
+
+        // Clear and render preview CTAs
+        utils.clearElement(livePreviewArea);
+        this.renderPreviewCtas(livePreviewArea);
     }
 }
 

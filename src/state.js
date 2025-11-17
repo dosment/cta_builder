@@ -106,6 +106,18 @@ class AppState {
     createDefaultCtaConfig(ctaType) {
         const ctaInfo = this.loadedData.ctaLabels[ctaType];
 
+        // Confirm Availability always uses custom dept
+        let defaultDept = null;
+        let defaultCustomDept = null;
+
+        if (ctaType === 'confirm_availability') {
+            defaultDept = 'custom';
+            defaultCustomDept = null;
+        } else if (ctaInfo.standardDept) {
+            // Other CTAs with standard dept use it as default
+            defaultDept = ctaInfo.standardDept;
+        }
+
         return {
             type: ctaType,
             label: ctaInfo.default,
@@ -113,8 +125,8 @@ class AppState {
             useDeeplink: false,
             deeplinkStep: null,
             tree: null,
-            dept: ctaInfo.standardDept || null,
-            customDept: null,
+            dept: defaultDept,
+            customDept: defaultCustomDept,
             styleType: 'primary',
             customStyles: {},
             placement: {

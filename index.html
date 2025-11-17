@@ -14,8 +14,10 @@
         </header>
 
         <div class="wizard-container">
-            <!-- Progress Indicator -->
-            <div class="progress-bar">
+            <!-- Main Wizard Content -->
+            <div class="wizard-main">
+                <!-- Progress Indicator -->
+                <div class="progress-bar">
                 <div class="progress-step active" data-step="1">
                     <div class="step-number">1</div>
                     <div class="step-label">OEM</div>
@@ -114,10 +116,19 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
-            <div class="wizard-nav">
-                <button id="prev-btn" class="btn btn-secondary" disabled>Previous</button>
-                <button id="next-btn" class="btn btn-primary">Next</button>
+                <!-- Navigation Buttons -->
+                <div class="wizard-nav">
+                    <button id="prev-btn" class="btn btn-secondary" disabled>Previous</button>
+                    <button id="next-btn" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+
+            <!-- Live Preview Sidebar -->
+            <div class="preview-sidebar" id="preview-sidebar">
+                <h3>Live Preview</h3>
+                <div id="live-preview-area" class="live-preview-area">
+                    <p class="text-muted">Select CTAs to see preview</p>
+                </div>
             </div>
         </div>
     </div>
