@@ -28,8 +28,8 @@ class Wizard {
     }
 
     setupEventListeners() {
-        // Navigation buttons
-        document.getElementById('next-btn').addEventListener('click', () => this.handleNext());
+        // Navigation buttons - only set up prev button here
+        // Next button is handled dynamically in updateNavigationButtons
         document.getElementById('prev-btn').addEventListener('click', () => this.handlePrev());
     }
 
@@ -133,13 +133,29 @@ class Wizard {
                     utils.clearFieldError(element.id);
                 }
 
-                // Update Next button state
-                const isValid = appState.validateCurrentStep();
-                if (appState.currentStep === appState.totalSteps) {
-                    nextBtn.disabled = !isValid;
-                }
+                // Update Next button state based on validation
+                this.updateNextButtonState();
             });
         });
+
+        // Set initial button state
+        this.updateNextButtonState();
+    }
+
+    /**
+     * Update Next/Generate button state based on current validation
+     */
+    updateNextButtonState() {
+        const nextBtn = document.getElementById('next-btn');
+        const isValid = appState.validateCurrentStep();
+
+        if (appState.currentStep === appState.totalSteps) {
+            // On final step, it's "Generate Code"
+            nextBtn.disabled = !isValid;
+        } else {
+            // On other steps, it's "Next"
+            nextBtn.disabled = !isValid;
+        }
     }
 
     updateProgressBar(stepNumber) {
@@ -168,7 +184,6 @@ class Wizard {
         if (stepNumber === appState.totalSteps) {
             nextBtn.textContent = 'Generate Code';
             nextBtn.style.display = 'block';
-            nextBtn.disabled = !appState.validateCurrentStep();
             // On final step, clicking regenerates code and scrolls to it
             nextBtn.onclick = () => {
                 this.renderPreview();
@@ -180,9 +195,10 @@ class Wizard {
         } else {
             nextBtn.textContent = 'Next';
             nextBtn.style.display = 'block';
-            nextBtn.disabled = false;
             nextBtn.onclick = () => this.handleNext();
         }
+
+        // Disabled state is managed by updateNextButtonState
     }
 
     // Step 1: OEM Selection
@@ -264,6 +280,12 @@ class Wizard {
             .map(cb => cb.value);
 
         appState.setSelectedCtas(selectedCtas);
+
+        // Clear validation error if at least one CTA is selected
+        if (selectedCtas.length > 0) {
+            utils.clearFieldError('cta-checkboxes');
+        }
+
         this.updateLivePreview();
     }
 
@@ -374,7 +396,7 @@ class Wizard {
             const option = utils.createElement('option', {
                 value: tree.id,
                 selected: config.tree === tree.id
-            }, `${tree.label} (${tree.id})`);
+            }, tree.id);
             treeSelect.appendChild(option);
         });
 
@@ -384,15 +406,8 @@ class Wizard {
             utils.clearFieldError(`tree-${ctaType}`);
         };
 
-        // Add helper text
-        const helperText = utils.createElement('small', {
-            className: 'form-text text-muted',
-            style: 'display: block; margin-top: 4px;'
-        }, 'Pick the routing tree the OEM gave you');
-
         treeField.appendChild(treeLabel);
         treeField.appendChild(treeSelect);
-        treeField.appendChild(helperText);
         row.appendChild(treeField);
 
         // Department configuration - Confirm Availability is special (custom only)
@@ -795,9 +810,14 @@ class Wizard {
         const srpLabel = utils.createElement('label', { for: `srp-${ctaType}` }, 'SRP');
 
         srpCheckbox.onchange = (e) => {
+            const newPlacement = { ...config.placement, srp: e.target.checked };
             appState.updateCtaConfig(ctaType, {
-                placement: { ...config.placement, srp: e.target.checked }
+                placement: newPlacement
             });
+            // Clear validation error if at least one placement is selected
+            if (newPlacement.srp || newPlacement.vdp) {
+                utils.clearFieldError(`srp-${ctaType}`);
+            }
         };
 
         srpField.appendChild(srpCheckbox);
@@ -814,9 +834,14 @@ class Wizard {
         const vdpLabel = utils.createElement('label', { for: `vdp-${ctaType}` }, 'VDP');
 
         vdpCheckbox.onchange = (e) => {
+            const newPlacement = { ...config.placement, vdp: e.target.checked };
             appState.updateCtaConfig(ctaType, {
-                placement: { ...config.placement, vdp: e.target.checked }
+                placement: newPlacement
             });
+            // Clear validation error if at least one placement is selected
+            if (newPlacement.srp || newPlacement.vdp) {
+                utils.clearFieldError(`srp-${ctaType}`);
+            }
         };
 
         vdpField.appendChild(vdpCheckbox);
