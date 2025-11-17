@@ -34,8 +34,18 @@ class Wizard {
     }
 
     handleNext() {
+        // Clear any previous field errors
+        utils.clearAllFieldErrors();
+
         // Validate current step
-        if (!appState.validateCurrentStep()) {
+        const errors = appState.getValidationErrors();
+        if (errors.length > 0) {
+            // Show field-level errors
+            errors.forEach(error => {
+                utils.showFieldError(error.field, error.message);
+            });
+
+            // Also show a notification
             utils.showNotification('Please complete all required fields', 'error');
             return;
         }
@@ -52,6 +62,9 @@ class Wizard {
     }
 
     renderStep(stepNumber) {
+        // Clear any field errors from previous step
+        utils.clearAllFieldErrors();
+
         // Update progress bar
         this.updateProgressBar(stepNumber);
 
@@ -92,8 +105,41 @@ class Wizard {
         // Update navigation buttons
         this.updateNavigationButtons(stepNumber);
 
+        // Set up validation watching for this step
+        this.setupValidationWatching();
+
         // Update live preview
         this.updateLivePreview();
+    }
+
+    /**
+     * Setup validation watching to dynamically enable/disable Next button
+     */
+    setupValidationWatching() {
+        const nextBtn = document.getElementById('next-btn');
+        const currentStep = document.getElementById(`step-${appState.currentStep}`);
+
+        if (!currentStep) return;
+
+        // Watch for changes on inputs, selects, and checkboxes
+        const watchElements = currentStep.querySelectorAll('input, select, textarea');
+
+        watchElements.forEach(element => {
+            const eventType = element.type === 'checkbox' ? 'change' : 'input';
+
+            element.addEventListener(eventType, () => {
+                // Clear error for this field when user starts correcting
+                if (element.id) {
+                    utils.clearFieldError(element.id);
+                }
+
+                // Update Next button state
+                const isValid = appState.validateCurrentStep();
+                if (appState.currentStep === appState.totalSteps) {
+                    nextBtn.disabled = !isValid;
+                }
+            });
+        });
     }
 
     updateProgressBar(stepNumber) {
@@ -118,19 +164,33 @@ class Wizard {
         // Previous button
         prevBtn.disabled = stepNumber === 1;
 
-        // Next button text
+        // Next button text and functionality
         if (stepNumber === appState.totalSteps) {
             nextBtn.textContent = 'Generate Code';
-            nextBtn.style.display = 'none'; // Hide on final step
+            nextBtn.style.display = 'block';
+            nextBtn.disabled = !appState.validateCurrentStep();
+            // On final step, clicking regenerates code and scrolls to it
+            nextBtn.onclick = () => {
+                this.renderPreview();
+                const codeOutput = document.getElementById('generated-code');
+                if (codeOutput) {
+                    codeOutput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            };
         } else {
             nextBtn.textContent = 'Next';
             nextBtn.style.display = 'block';
+            nextBtn.disabled = false;
+            nextBtn.onclick = () => this.handleNext();
         }
     }
 
     // Step 1: OEM Selection
     renderOemSelection() {
         const select = document.getElementById('oem-select');
+
+        // Mark as required
+        select.required = true;
 
         // Clear existing options (except first)
         while (select.options.length > 1) {
@@ -154,6 +214,8 @@ class Wizard {
             if (oemCode) {
                 const oemData = await appState.loadOemData(oemCode);
                 appState.setOem(oemCode, oemData);
+                // Clear validation error if present
+                utils.clearFieldError('oem-select');
                 // Update live preview immediately with OEM colors
                 this.updateLivePreview();
             } else {
@@ -292,8 +354,17 @@ class Wizard {
 
         // Tree selector
         const treeField = utils.createElement('div', { className: 'config-field' });
-        const treeLabel = utils.createElement('label', {}, 'Tree:');
-        const treeSelect = utils.createElement('select', { id: `tree-${ctaType}` });
+        const treeLabel = utils.createElement('label', {}, 'Tree: ');
+        const requiredMark = utils.createElement('span', {
+            className: 'text-danger',
+            style: 'font-weight: bold;'
+        }, '*');
+        treeLabel.appendChild(requiredMark);
+
+        const treeSelect = utils.createElement('select', {
+            id: `tree-${ctaType}`,
+            required: true
+        });
 
         const defaultOption = utils.createElement('option', { value: '' }, '-- Select Tree --');
         treeSelect.appendChild(defaultOption);
@@ -303,32 +374,49 @@ class Wizard {
             const option = utils.createElement('option', {
                 value: tree.id,
                 selected: config.tree === tree.id
-            }, tree.id); // Show tree ID instead of label
+            }, `${tree.label} (${tree.id})`);
             treeSelect.appendChild(option);
         });
 
         treeSelect.onchange = (e) => {
             appState.updateCtaConfig(ctaType, { tree: e.target.value });
+            // Clear validation error
+            utils.clearFieldError(`tree-${ctaType}`);
         };
+
+        // Add helper text
+        const helperText = utils.createElement('small', {
+            className: 'form-text text-muted',
+            style: 'display: block; margin-top: 4px;'
+        }, 'Pick the routing tree the OEM gave you');
 
         treeField.appendChild(treeLabel);
         treeField.appendChild(treeSelect);
+        treeField.appendChild(helperText);
         row.appendChild(treeField);
 
         // Department configuration - Confirm Availability is special (custom only)
         if (ctaType === 'confirm_availability') {
             // Only show custom dept input for Confirm Availability
             const customDeptField = utils.createElement('div', { className: 'config-field' });
-            const customDeptLabel = utils.createElement('label', {}, 'Custom Dept #:');
+            const customDeptLabel = utils.createElement('label', {}, 'Custom Dept #: ');
+            const requiredMark = utils.createElement('span', {
+                className: 'text-danger',
+                style: 'font-weight: bold;'
+            }, '*');
+            customDeptLabel.appendChild(requiredMark);
+
             const customDeptInput = utils.createElement('input', {
                 type: 'number',
                 id: `custom-dept-${ctaType}`,
                 value: config.customDept || '',
-                placeholder: 'Enter department number'
+                placeholder: 'Enter department number',
+                required: true
             });
 
             customDeptInput.oninput = (e) => {
                 appState.updateCtaConfig(ctaType, { dept: 'custom', customDept: parseInt(e.target.value) });
+                utils.clearFieldError(`custom-dept-${ctaType}`);
             };
 
             customDeptField.appendChild(customDeptLabel);
@@ -337,8 +425,17 @@ class Wizard {
         } else {
             // Regular department selector for other CTAs
             const deptField = utils.createElement('div', { className: 'config-field' });
-            const deptLabel = utils.createElement('label', {}, 'Department:');
-            const deptSelect = utils.createElement('select', { id: `dept-${ctaType}` });
+            const deptLabel = utils.createElement('label', {}, 'Department: ');
+            const requiredMark = utils.createElement('span', {
+                className: 'text-danger',
+                style: 'font-weight: bold;'
+            }, '*');
+            deptLabel.appendChild(requiredMark);
+
+            const deptSelect = utils.createElement('select', {
+                id: `dept-${ctaType}`,
+                required: true
+            });
 
             const deptDefaultOption = utils.createElement('option', { value: '' }, '-- Select Department --');
             deptSelect.appendChild(deptDefaultOption);
@@ -355,6 +452,7 @@ class Wizard {
 
             deptSelect.onchange = (e) => {
                 const value = e.target.value;
+                utils.clearFieldError(`dept-${ctaType}`);
                 if (value === 'custom') {
                     appState.updateCtaConfig(ctaType, { dept: 'custom' });
                     this.renderTreeConfiguration(); // Re-render to show custom input
@@ -370,16 +468,24 @@ class Wizard {
             // Custom department input (if custom is selected)
             if (config.dept === 'custom') {
                 const customDeptField = utils.createElement('div', { className: 'config-field' });
-                const customDeptLabel = utils.createElement('label', {}, 'Custom Dept #:');
+                const customDeptLabel = utils.createElement('label', {}, 'Custom Dept #: ');
+                const requiredMark = utils.createElement('span', {
+                    className: 'text-danger',
+                    style: 'font-weight: bold;'
+                }, '*');
+                customDeptLabel.appendChild(requiredMark);
+
                 const customDeptInput = utils.createElement('input', {
                     type: 'number',
                     id: `custom-dept-${ctaType}`,
                     value: config.customDept || '',
-                    placeholder: 'Enter department number'
+                    placeholder: 'Enter department number',
+                    required: true
                 });
 
                 customDeptInput.oninput = (e) => {
                     appState.updateCtaConfig(ctaType, { customDept: parseInt(e.target.value) });
+                    utils.clearFieldError(`custom-dept-${ctaType}`);
                 };
 
                 customDeptField.appendChild(customDeptLabel);
@@ -484,7 +590,7 @@ class Wizard {
         labelField.appendChild(labelSelect);
         row.appendChild(labelField);
 
-        // Show custom text input if "Custom" is selected
+        // Only show custom text input if "Custom" is selected
         if (labelSelect.value === '__custom__') {
             const customLabelField = utils.createElement('div', { className: 'config-field' });
             const customLabelLabel = utils.createElement('label', {}, 'Custom Label Text:');
@@ -499,21 +605,6 @@ class Wizard {
                 appState.updateCtaConfig(ctaType, { customLabel: e.target.value });
                 this.updateLivePreview(); // Update preview as user types
             };
-
-            customLabelField.appendChild(customLabelLabel);
-            customLabelField.appendChild(customLabelInput);
-            row.appendChild(customLabelField);
-        } else {
-            // If pre-populated option selected, show disabled text box
-            const customLabelField = utils.createElement('div', { className: 'config-field' });
-            const customLabelLabel = utils.createElement('label', {}, 'Custom Label Text:');
-            const customLabelInput = utils.createElement('input', {
-                type: 'text',
-                id: `custom-label-${ctaType}`,
-                value: '',
-                placeholder: 'Select "Custom" to edit',
-                disabled: true
-            });
 
             customLabelField.appendChild(customLabelLabel);
             customLabelField.appendChild(customLabelInput);
@@ -685,7 +776,14 @@ class Wizard {
     }
 
     createPlacementCheckboxes(ctaType, config) {
-        const row = utils.createElement('div', { className: 'config-row' });
+        const container = utils.createElement('div', { className: 'placement-container' });
+
+        // Page placement checkboxes (SRP/VDP)
+        const pageRow = utils.createElement('div', { className: 'config-row' });
+        const pageLabel = utils.createElement('label', {
+            style: 'display: block; margin-bottom: 8px; font-weight: 500;'
+        }, 'Show on:');
+        pageRow.appendChild(pageLabel);
 
         // SRP checkbox
         const srpField = utils.createElement('div', { className: 'checkbox-item' });
@@ -694,7 +792,7 @@ class Wizard {
             id: `srp-${ctaType}`,
             checked: config.placement.srp
         });
-        const srpLabel = utils.createElement('label', { for: `srp-${ctaType}` }, 'Show on SRP');
+        const srpLabel = utils.createElement('label', { for: `srp-${ctaType}` }, 'SRP');
 
         srpCheckbox.onchange = (e) => {
             appState.updateCtaConfig(ctaType, {
@@ -704,7 +802,7 @@ class Wizard {
 
         srpField.appendChild(srpCheckbox);
         srpField.appendChild(srpLabel);
-        row.appendChild(srpField);
+        pageRow.appendChild(srpField);
 
         // VDP checkbox
         const vdpField = utils.createElement('div', { className: 'checkbox-item' });
@@ -713,7 +811,7 @@ class Wizard {
             id: `vdp-${ctaType}`,
             checked: config.placement.vdp
         });
-        const vdpLabel = utils.createElement('label', { for: `vdp-${ctaType}` }, 'Show on VDP');
+        const vdpLabel = utils.createElement('label', { for: `vdp-${ctaType}` }, 'VDP');
 
         vdpCheckbox.onchange = (e) => {
             appState.updateCtaConfig(ctaType, {
@@ -723,47 +821,55 @@ class Wizard {
 
         vdpField.appendChild(vdpCheckbox);
         vdpField.appendChild(vdpLabel);
-        row.appendChild(vdpField);
+        pageRow.appendChild(vdpField);
 
-        // Mobile Only checkbox
-        const mobileField = utils.createElement('div', { className: 'checkbox-item' });
-        const mobileCheckbox = utils.createElement('input', {
-            type: 'checkbox',
-            id: `mobile-${ctaType}`,
-            checked: config.placement.mobileOnly
+        container.appendChild(pageRow);
+
+        // Device targeting dropdown
+        const deviceRow = utils.createElement('div', { className: 'config-row', style: 'margin-top: 12px;' });
+        const deviceField = utils.createElement('div', { className: 'config-field' });
+        const deviceLabel = utils.createElement('label', {}, 'Device Targeting:');
+        const deviceSelect = utils.createElement('select', { id: `device-${ctaType}` });
+
+        // Determine current device setting
+        let currentDeviceValue = 'all';
+        if (config.placement.mobileOnly) {
+            currentDeviceValue = 'mobile';
+        } else if (config.placement.desktopOnly) {
+            currentDeviceValue = 'desktop';
+        }
+
+        const deviceOptions = [
+            { value: 'all', label: 'All devices' },
+            { value: 'mobile', label: 'Mobile only' },
+            { value: 'desktop', label: 'Desktop only' }
+        ];
+
+        deviceOptions.forEach(opt => {
+            const option = utils.createElement('option', {
+                value: opt.value,
+                selected: currentDeviceValue === opt.value
+            }, opt.label);
+            deviceSelect.appendChild(option);
         });
-        const mobileLabel = utils.createElement('label', { for: `mobile-${ctaType}` }, 'Mobile Only');
 
-        mobileCheckbox.onchange = (e) => {
+        deviceSelect.onchange = (e) => {
+            const value = e.target.value;
             appState.updateCtaConfig(ctaType, {
-                placement: { ...config.placement, mobileOnly: e.target.checked }
+                placement: {
+                    ...config.placement,
+                    mobileOnly: value === 'mobile',
+                    desktopOnly: value === 'desktop'
+                }
             });
         };
 
-        mobileField.appendChild(mobileCheckbox);
-        mobileField.appendChild(mobileLabel);
-        row.appendChild(mobileField);
+        deviceField.appendChild(deviceLabel);
+        deviceField.appendChild(deviceSelect);
+        deviceRow.appendChild(deviceField);
+        container.appendChild(deviceRow);
 
-        // Desktop Only checkbox
-        const desktopField = utils.createElement('div', { className: 'checkbox-item' });
-        const desktopCheckbox = utils.createElement('input', {
-            type: 'checkbox',
-            id: `desktop-${ctaType}`,
-            checked: config.placement.desktopOnly
-        });
-        const desktopLabel = utils.createElement('label', { for: `desktop-${ctaType}` }, 'Desktop Only');
-
-        desktopCheckbox.onchange = (e) => {
-            appState.updateCtaConfig(ctaType, {
-                placement: { ...config.placement, desktopOnly: e.target.checked }
-            });
-        };
-
-        desktopField.appendChild(desktopCheckbox);
-        desktopField.appendChild(desktopLabel);
-        row.appendChild(desktopField);
-
-        return row;
+        return container;
     }
 
     // Step 6: Preview & Export

@@ -254,12 +254,34 @@ class AppState {
      * Validate current step
      */
     validateCurrentStep() {
+        const errors = this.getValidationErrors();
+        return errors.length === 0;
+    }
+
+    /**
+     * Get detailed validation errors for current step
+     */
+    getValidationErrors() {
+        const errors = [];
+
         switch (this.currentStep) {
             case 1: // OEM Selection
-                return this.data.oem !== null;
+                if (!this.data.oem) {
+                    errors.push({
+                        field: 'oem-select',
+                        message: 'Please select an OEM'
+                    });
+                }
+                break;
 
             case 2: // CTA Selection
-                return this.data.selectedCtas.length > 0;
+                if (this.data.selectedCtas.length === 0) {
+                    errors.push({
+                        field: 'cta-checkboxes',
+                        message: 'Please select at least one CTA'
+                    });
+                }
+                break;
 
             case 3: // Tree Configuration
                 // Validate that CTAs requiring trees have them configured
@@ -270,46 +292,68 @@ class AppState {
                     if (ctaInfo.requiresTree && !config.useDeeplink) {
                         // Must have tree selected
                         if (!config.tree) {
-                            return false;
+                            errors.push({
+                                field: `tree-${ctaType}`,
+                                message: `Select a tree for ${ctaInfo.default}`
+                            });
                         }
                         // Must have dept (number) or custom dept filled
                         if (!config.dept || (config.dept === 'custom' && !config.customDept)) {
-                            return false;
+                            errors.push({
+                                field: ctaType === 'confirm_availability' ? `custom-dept-${ctaType}` : `dept-${ctaType}`,
+                                message: `Select a department for ${ctaInfo.default}`
+                            });
                         }
                     }
 
                     // If using deeplink for a CTA that supports it, must have deeplink step
                     if (config.useDeeplink && ctaInfo.deeplinkSteps && ctaInfo.deeplinkSteps.length > 0) {
                         if (!config.deeplinkStep) {
-                            return false;
+                            errors.push({
+                                field: `deeplink-step-${ctaType}`,
+                                message: `Select a deeplink step for ${ctaInfo.default}`
+                            });
                         }
                     }
                 }
-                return true;
+                break;
 
             case 4: // Styling
                 // Basic validation - ensure all CTAs have a style type
-                return this.data.selectedCtas.every(
-                    type => this.data.ctaConfigs[type].styleType
-                );
+                for (const ctaType of this.data.selectedCtas) {
+                    const config = this.data.ctaConfigs[ctaType];
+                    if (!config.styleType) {
+                        errors.push({
+                            field: `style-${ctaType}`,
+                            message: 'Please select a style type'
+                        });
+                    }
+                }
+                break;
 
             case 5: // Advanced Styling
                 // Validate that all slider values are within acceptable range (handled by HTML5 validation)
-                return true;
+                break;
 
             case 6: // Placement
                 // Ensure at least one placement is selected for each CTA
-                return this.data.selectedCtas.every(type => {
-                    const placement = this.data.ctaConfigs[type].placement;
-                    return placement.srp || placement.vdp;
-                });
+                for (const ctaType of this.data.selectedCtas) {
+                    const placement = this.data.ctaConfigs[ctaType].placement;
+                    if (!placement.srp && !placement.vdp) {
+                        const ctaInfo = this.loadedData.ctaLabels[ctaType];
+                        errors.push({
+                            field: `srp-${ctaType}`,
+                            message: `Select at least one page placement for ${ctaInfo.default}`
+                        });
+                    }
+                }
+                break;
 
             case 7: // Preview/Export
-                return true; // Always valid
-
-            default:
-                return false;
+                break;
         }
+
+        return errors;
     }
 
     /**

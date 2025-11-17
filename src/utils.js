@@ -347,3 +347,62 @@ export function camelToTitle(str) {
         .replace(/^./, str => str.toUpperCase())
         .trim();
 }
+
+/**
+ * Show inline error message for a field
+ */
+export function showFieldError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+
+    // Remove any existing error for this field
+    clearFieldError(fieldId);
+
+    // Add error class to field
+    field.classList.add('field-error');
+
+    // Create error message element
+    const errorElement = createElement('small', {
+        className: 'text-danger field-error-message',
+        id: `${fieldId}-error`,
+        style: 'display: block; margin-top: 4px; color: #dc3545; font-size: 0.875em;'
+    }, message);
+
+    // Insert error message after the field
+    field.parentNode.insertBefore(errorElement, field.nextSibling);
+
+    // Add visual indicator to the field
+    field.style.borderColor = '#dc3545';
+}
+
+/**
+ * Clear inline error message for a field
+ */
+export function clearFieldError(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+
+    // Remove error class
+    field.classList.remove('field-error');
+    field.style.borderColor = '';
+
+    // Remove error message element
+    const errorElement = document.getElementById(`${fieldId}-error`);
+    if (errorElement) {
+        errorElement.remove();
+    }
+}
+
+/**
+ * Clear all field errors on the page
+ */
+export function clearAllFieldErrors() {
+    // Clear all error messages
+    document.querySelectorAll('.field-error-message').forEach(el => el.remove());
+
+    // Clear all error styling
+    document.querySelectorAll('.field-error').forEach(field => {
+        field.classList.remove('field-error');
+        field.style.borderColor = '';
+    });
+}
