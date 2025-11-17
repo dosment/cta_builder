@@ -53,10 +53,18 @@ function generateCss(oemData, selectedCtas, ctaConfigs) {
     selectedCtas.forEach(ctaType => {
         const config = ctaConfigs[ctaType];
         const styles = oemData.styles[config.styleType];
+        const customStyles = config.customStyles || {};
         const className = utils.sanitizeCssClassName(ctaType);
 
+        // Merge base styles with custom overrides
+        const mergedStyles = { ...styles };
+        if (customStyles.borderRadius) mergedStyles.borderRadius = customStyles.borderRadius;
+        if (customStyles.marginTop) mergedStyles.marginTop = customStyles.marginTop;
+        if (customStyles.marginBottom) mergedStyles.marginBottom = customStyles.marginBottom;
+        if (customStyles.padding) mergedStyles.padding = customStyles.padding;
+
         css += `.demo-cta-${className} {\n`;
-        css += `    ${utils.generateCssFromStyles(styles)};\n`;
+        css += `    ${utils.generateCssFromStyles(mergedStyles)};\n`;
         css += '}\n\n';
 
         // Hover styles
@@ -100,14 +108,26 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
 
         const label = config.customLabel || config.label;
 
-        html += '    <div>\n';
+        // Add mobile/desktop wrappers if specified
+        let openWrapper = '';
+        let closeWrapper = '';
+
+        if (config.placement.mobileOnly && !config.placement.desktopOnly) {
+            openWrapper = '<div class="cn-mobile-only">';
+            closeWrapper = '</div>';
+        } else if (config.placement.desktopOnly && !config.placement.mobileOnly) {
+            openWrapper = '<div class="cn-desktop-only">';
+            closeWrapper = '</div>';
+        }
+
+        html += `    ${openWrapper}<div>\n`;
         html += '        <a';
 
         // Add all attributes including class
         html += generateCtaAttributes(ctaType, config, ctaLabels);
 
         html += `>${label}</a>\n`;
-        html += '    </div>\n';
+        html += `    </div>${closeWrapper}\n`;
     });
 
     html += '</div>';

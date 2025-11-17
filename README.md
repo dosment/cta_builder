@@ -5,7 +5,7 @@ A front-end wizard tool for generating custom Call-to-Action (CTA) code for deal
 ## Features
 
 - 38+ OEM brand support with pre-configured styling
-- 6-step wizard interface
+- 7-step wizard interface
 - Support for multiple CTA types:
   - Personalize My Payment (BuyNow)
   - Confirm Availability
@@ -16,9 +16,11 @@ A front-end wizard tool for generating custom Call-to-Action (CTA) code for deal
   - Text Us
   - Chat Now
 - Deeplink support for enhanced functionality
-- Live preview of CTAs
+- Live preview sidebar with real-time updates
+- OEM color scheme preview updates dynamically on Step 1
+- Advanced styling controls (border-radius, margins, padding)
 - Copy-to-clipboard code generation
-- SRP/VDP placement configuration
+- SRP/VDP/Mobile/Desktop placement configuration
 
 ## Getting Started
 
@@ -46,13 +48,14 @@ A front-end wizard tool for generating custom Call-to-Action (CTA) code for deal
    http://localhost:8000
    ```
 
-3. Follow the 6-step wizard:
-   - **Step 1:** Select your OEM brand
+3. Follow the 7-step wizard:
+   - **Step 1:** Select your OEM brand (live preview updates with brand colors)
    - **Step 2:** Choose which CTAs to include
-   - **Step 3:** Configure trees and departments
+   - **Step 3:** Configure trees and departments (with deeplink support)
    - **Step 4:** Customize styling and labels
-   - **Step 5:** Set placement (SRP/VDP)
-   - **Step 6:** Preview and copy generated code
+   - **Step 5:** Advanced styling (border-radius, margins, padding)
+   - **Step 6:** Set placement (SRP/VDP/Mobile/Desktop)
+   - **Step 7:** Preview and copy generated code
 
 ## Project Structure
 
@@ -88,9 +91,10 @@ cta_builder/
 The wizard generates copy-paste ready HTML/CSS code including:
 - Complete CSS styles with OEM-specific branding
 - HTML markup with proper class names
-- SRP/VDP wrapper divs
+- SRP/VDP/Mobile/Desktop wrapper divs
 - Appropriate onclick handlers or data attributes
 - Deeplink configuration (when enabled)
+- Custom border-radius, margins, and padding
 
 ## Notes
 
@@ -98,3 +102,7 @@ The wizard generates copy-paste ready HTML/CSS code including:
 - Follows CarNow CTA implementation standards
 - Supports both regular CTAs and deeplinked variants
 - Includes hover states and transitions
+- Live preview updates in real-time as you configure
+- OEM color scheme applies to preview immediately upon selection
+- Trees sorted alphabetically for easy selection
+- Department defaults auto-selected (can be changed)

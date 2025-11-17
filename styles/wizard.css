@@ -101,6 +101,63 @@ body {
     text-decoration: none;
     cursor: pointer;
     border-style: solid;
+    margin-bottom: 7px;
+}
+
+/* Tree dropdown styling */
+select[id^="tree-"] {
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+select[id^="tree-"] option {
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+}
+
+/* Slider styling */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.slider-container input[type="range"] {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--gray-300);
+    border-radius: 5px;
+    outline: none;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--carnow-blue);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-container input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--carnow-blue);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.slider-value {
+    font-weight: bold;
+    color: var(--carnow-navy);
+    min-width: 50px;
+    text-align: right;
 }
 
 /* Main wizard content */
@@ -157,12 +214,13 @@ body {
 }
 
 .progress-step.active .step-number {
-    background: var(--carnow-green);
-    color: var(--carnow-navy);
+    background: var(--carnow-navy);
+    color: var(--white);
+    box-shadow: 0 0 15px var(--carnow-green), 0 0 30px var(--carnow-green);
 }
 
 .progress-step.active .step-label {
-    color: var(--carnow-green);
+    color: var(--carnow-navy);
     font-weight: 600;
 }
 

@@ -11,7 +11,9 @@
 - [ ] Page loads without console errors
 - [ ] OEM dropdown populates with 38 options (Acura through Volvo)
 - [ ] Selecting an OEM enables the Next button
-- [ ] Progress bar shows Step 1 as active
+- [ ] Progress bar shows Step 1 as active (dark blue with lime green glow)
+- [ ] Live preview sidebar updates with OEM brand colors immediately upon selection
+- [ ] Preview shows placeholder message when no OEM selected
 
 ### Step 2: CTA Selection
 - [ ] All 8 CTA types display as checkboxes:
@@ -30,11 +32,17 @@
 ### Step 3: Tree & Department Configuration
 - [ ] Only selected CTAs appear in configuration list
 - [ ] CTAs with `requiresTree: true` show tree and department dropdowns
+- [ ] Tree dropdown displays tree IDs in UPPERCASE MONOSPACED font
+- [ ] Trees are sorted alphabetically
+- [ ] CTAs with standard departments have them auto-selected by default
+- [ ] Departments can be changed from dropdown
 - [ ] CTAs with `supportsDeeplink: true` show deeplink toggle
-- [ ] When deeplink is enabled:
-  - [ ] Tree/dept fields hide
-  - [ ] Deeplink step dropdown appears
-- [ ] Custom department option works:
+- [ ] Deeplink toggle works properly:
+  - [ ] When enabled, tree/dept fields hide and deeplink step dropdown appears
+  - [ ] When disabled, tree/dept fields reappear
+  - [ ] Re-render happens automatically on toggle
+- [ ] Confirm Availability shows ONLY custom department number input (no dropdown)
+- [ ] Custom department option works for other CTAs:
   - [ ] Selecting "Custom Department Number" shows number input
   - [ ] Custom number is required for validation
 - [ ] Text Us and Chat Now show "no configuration required" message
@@ -43,17 +51,31 @@
 ### Step 4: Styling Configuration
 - [ ] Each selected CTA appears in list
 - [ ] Label dropdown shows all available options from cta-labels.json
-- [ ] Custom label option allows text input
-- [ ] Style type dropdown shows OEM-specific styles (Primary/Outline)
+- [ ] When custom label selected, text input field appears (NOT a prompt)
+- [ ] When pre-populated option selected, custom label text box is DISABLED
+- [ ] Style type dropdown shows OEM-specific styles (Primary/Secondary)
+- [ ] Live preview updates dynamically when label or style changes
 - [ ] Changes are saved to state
 
-### Step 5: Placement Configuration
+### Step 5: Advanced Styling Configuration
 - [ ] Each selected CTA appears in list
-- [ ] SRP and VDP checkboxes present
-- [ ] At least one must be checked (validation)
-- [ ] Both can be checked simultaneously
+- [ ] Border-radius slider (0-50px) with live preview
+- [ ] Margin-top slider (0-50px) with live preview
+- [ ] Margin-bottom slider (0-50px) with live preview - default 7px max
+- [ ] Padding slider (0-50px) with live preview
+- [ ] Slider values display current value
+- [ ] Live preview updates in real-time as sliders move
 
-### Step 6: Preview & Export
+### Step 6: Placement Configuration
+- [ ] Each selected CTA appears in list
+- [ ] SRP checkbox present
+- [ ] VDP checkbox present
+- [ ] Mobile Only checkbox present
+- [ ] Desktop Only checkbox present
+- [ ] At least one placement must be checked (validation)
+- [ ] Multiple can be checked simultaneously
+
+### Step 7: Preview & Export
 - [ ] Live preview shows buttons with correct styling:
   - [ ] OEM brand colors applied
   - [ ] Text color correct

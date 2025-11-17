@@ -6,7 +6,7 @@
 class AppState {
     constructor() {
         this.currentStep = 1;
-        this.totalSteps = 6;
+        this.totalSteps = 7;
         this.data = {
             oem: null,              // Selected OEM code
             oemData: null,          // Full OEM data object
@@ -128,10 +128,14 @@ class AppState {
             dept: defaultDept,
             customDept: defaultCustomDept,
             styleType: 'primary',
-            customStyles: {},
+            customStyles: {
+                marginBottom: '7px'
+            },
             placement: {
                 srp: true,
                 vdp: true,
+                mobileOnly: false,
+                desktopOnly: false,
                 sameStyle: true
             }
         };
@@ -223,13 +227,16 @@ class AppState {
     }
 
     /**
-     * Get trees for a specific category
+     * Get trees for a specific category (sorted alphabetically)
      */
     getTreesForCategory(category) {
         if (!this.loadedData.trees) return [];
 
         const treeCategory = this.loadedData.trees.trees.find(t => t.category === category);
-        return treeCategory ? treeCategory.options : [];
+        if (!treeCategory) return [];
+
+        // Sort trees alphabetically by ID
+        return [...treeCategory.options].sort((a, b) => a.id.localeCompare(b.id));
     }
 
     /**
@@ -286,14 +293,18 @@ class AppState {
                     type => this.data.ctaConfigs[type].styleType
                 );
 
-            case 5: // Placement
+            case 5: // Advanced Styling
+                // Validate that all slider values are within acceptable range (handled by HTML5 validation)
+                return true;
+
+            case 6: // Placement
                 // Ensure at least one placement is selected for each CTA
                 return this.data.selectedCtas.every(type => {
                     const placement = this.data.ctaConfigs[type].placement;
                     return placement.srp || placement.vdp;
                 });
 
-            case 6: // Preview/Export
+            case 7: // Preview/Export
                 return true; // Always valid
 
             default:

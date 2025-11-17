@@ -79,9 +79,12 @@ class Wizard {
                 this.renderStylingConfiguration();
                 break;
             case 5:
-                this.renderPlacementConfiguration();
+                this.renderAdvancedStylingConfiguration();
                 break;
             case 6:
+                this.renderPlacementConfiguration();
+                break;
+            case 7:
                 this.renderPreview();
                 break;
         }
@@ -151,8 +154,11 @@ class Wizard {
             if (oemCode) {
                 const oemData = await appState.loadOemData(oemCode);
                 appState.setOem(oemCode, oemData);
+                // Update live preview immediately with OEM colors
+                this.updateLivePreview();
             } else {
                 appState.setOem(null, null);
+                this.updateLivePreview();
             }
         };
     }
@@ -461,6 +467,7 @@ class Wizard {
                 this.renderStylingConfiguration();
             } else {
                 appState.updateCtaConfig(ctaType, { customLabel: null, label: e.target.value });
+                this.updateLivePreview(); // Update preview when label changes
             }
         };
 
@@ -481,7 +488,23 @@ class Wizard {
 
             customLabelInput.oninput = (e) => {
                 appState.updateCtaConfig(ctaType, { customLabel: e.target.value });
+                this.updateLivePreview(); // Update preview as user types
             };
+
+            customLabelField.appendChild(customLabelLabel);
+            customLabelField.appendChild(customLabelInput);
+            row.appendChild(customLabelField);
+        } else {
+            // If pre-populated option selected, show disabled text box
+            const customLabelField = utils.createElement('div', { className: 'config-field' });
+            const customLabelLabel = utils.createElement('label', {}, 'Custom Label Text:');
+            const customLabelInput = utils.createElement('input', {
+                type: 'text',
+                id: `custom-label-${ctaType}`,
+                value: '',
+                placeholder: 'Select "Custom" to edit',
+                disabled: true
+            });
 
             customLabelField.appendChild(customLabelLabel);
             customLabelField.appendChild(customLabelInput);
@@ -512,6 +535,7 @@ class Wizard {
 
         styleSelect.onchange = (e) => {
             appState.updateCtaConfig(ctaType, { styleType: e.target.value });
+            this.updateLivePreview(); // Update preview when style changes
         };
 
         styleField.appendChild(styleLabel);
@@ -521,7 +545,114 @@ class Wizard {
         return row;
     }
 
-    // Step 5: Placement Configuration
+    // Step 5: Advanced Styling Configuration
+    renderAdvancedStylingConfiguration() {
+        const container = document.getElementById('advanced-styling-config-list');
+        utils.clearElement(container);
+
+        const ctaLabels = appState.loadedData.ctaLabels;
+
+        appState.data.selectedCtas.forEach(ctaType => {
+            const config = appState.getCtaConfig(ctaType);
+            const ctaInfo = ctaLabels[ctaType];
+            const oemStyles = appState.data.oemData.styles[config.styleType];
+
+            const configItem = utils.createElement('div', { className: 'config-item' });
+            const heading = utils.createElement('h3', {}, ctaInfo.default);
+            configItem.appendChild(heading);
+
+            // Border Radius Slider
+            const borderRadiusRow = this.createSlider(
+                ctaType,
+                'borderRadius',
+                'Border Radius (px)',
+                0,
+                50,
+                parseInt(config.customStyles.borderRadius) || parseInt(oemStyles.borderRadius) || 4
+            );
+            configItem.appendChild(borderRadiusRow);
+
+            // Margin Top Slider
+            const marginTopRow = this.createSlider(
+                ctaType,
+                'marginTop',
+                'Margin Top (px)',
+                0,
+                50,
+                parseInt(config.customStyles.marginTop) || parseInt(oemStyles.marginTop) || 6
+            );
+            configItem.appendChild(marginTopRow);
+
+            // Margin Bottom Slider
+            const marginBottomRow = this.createSlider(
+                ctaType,
+                'marginBottom',
+                'Margin Bottom (px)',
+                0,
+                50,
+                parseInt(config.customStyles.marginBottom) || 7
+            );
+            configItem.appendChild(marginBottomRow);
+
+            // Padding Slider
+            const paddingRow = this.createSlider(
+                ctaType,
+                'padding',
+                'Padding (px)',
+                0,
+                50,
+                parseInt(config.customStyles.padding) || parseInt(oemStyles.padding) || 11
+            );
+            configItem.appendChild(paddingRow);
+
+            container.appendChild(configItem);
+        });
+    }
+
+    createSlider(ctaType, property, label, min, max, defaultValue) {
+        const row = utils.createElement('div', { className: 'config-row' });
+
+        const sliderField = utils.createElement('div', { className: 'config-field' });
+        const sliderLabel = utils.createElement('label', {}, `${label}:`);
+
+        const sliderContainer = utils.createElement('div', { className: 'slider-container' });
+
+        const slider = utils.createElement('input', {
+            type: 'range',
+            id: `${property}-${ctaType}`,
+            min: min,
+            max: max,
+            value: defaultValue
+        });
+
+        const valueDisplay = utils.createElement('span', {
+            className: 'slider-value',
+            id: `${property}-value-${ctaType}`
+        }, `${defaultValue}px`);
+
+        slider.oninput = (e) => {
+            const value = e.target.value;
+            valueDisplay.textContent = `${value}px`;
+
+            // Update state with the new value
+            const customStyles = { ...appState.getCtaConfig(ctaType).customStyles };
+            customStyles[property] = `${value}px`;
+            appState.updateCtaConfig(ctaType, { customStyles });
+
+            // Update live preview
+            this.updateLivePreview();
+        };
+
+        sliderContainer.appendChild(slider);
+        sliderContainer.appendChild(valueDisplay);
+        sliderField.appendChild(sliderLabel);
+        sliderField.appendChild(sliderContainer);
+        row.appendChild(sliderField);
+
+        return row;
+    }
+
+    // Step 6: Placement Configuration
     renderPlacementConfiguration() {
         const container = document.getElementById('placement-config-list');
         utils.clearElement(container);
@@ -585,6 +716,44 @@ class Wizard {
         vdpField.appendChild(vdpLabel);
         row.appendChild(vdpField);
 
+        // Mobile Only checkbox
+        const mobileField = utils.createElement('div', { className: 'checkbox-item' });
+        const mobileCheckbox = utils.createElement('input', {
+            type: 'checkbox',
+            id: `mobile-${ctaType}`,
+            checked: config.placement.mobileOnly
+        });
+        const mobileLabel = utils.createElement('label', { for: `mobile-${ctaType}` }, 'Mobile Only');
+
+        mobileCheckbox.onchange = (e) => {
+            appState.updateCtaConfig(ctaType, {
+                placement: { ...config.placement, mobileOnly: e.target.checked }
+            });
+        };
+
+        mobileField.appendChild(mobileCheckbox);
+        mobileField.appendChild(mobileLabel);
+        row.appendChild(mobileField);
+
+        // Desktop Only checkbox
+        const desktopField = utils.createElement('div', { className: 'checkbox-item' });
+        const desktopCheckbox = utils.createElement('input', {
+            type: 'checkbox',
+            id: `desktop-${ctaType}`,
+            checked: config.placement.desktopOnly
+        });
+        const desktopLabel = utils.createElement('label', { for: `desktop-${ctaType}` }, 'Desktop Only');
+
+        desktopCheckbox.onchange = (e) => {
+            appState.updateCtaConfig(ctaType, {
+                placement: { ...config.placement, desktopOnly: e.target.checked }
+            });
+        };
+
+        desktopField.appendChild(desktopCheckbox);
+        desktopField.appendChild(desktopLabel);
+        row.appendChild(desktopField);
+
         return row;
     }
 
@@ -619,6 +788,7 @@ class Wizard {
         appState.data.selectedCtas.forEach(ctaType => {
             const config = appState.getCtaConfig(ctaType);
             const styles = oemData.styles[config.styleType];
+            const customStyles = config.customStyles || {};
 
             const button = utils.createElement('a', {
                 className: 'demo-cta',
@@ -629,13 +799,13 @@ class Wizard {
                     background-color: ${styles.backgroundColor};
                     color: ${styles.textColor};
                     border: ${styles.borderWidth} solid ${styles.borderColor};
-                    border-radius: ${styles.borderRadius};
+                    border-radius: ${customStyles.borderRadius || styles.borderRadius};
                     text-transform: ${styles.textTransform};
                     font-size: ${styles.fontSize};
                     font-weight: ${styles.fontWeight};
-                    padding: ${styles.padding};
-                    margin-top: ${styles.marginTop};
-                    margin-bottom: ${styles.marginBottom};
+                    padding: ${customStyles.padding || styles.padding};
+                    margin-top: ${customStyles.marginTop || styles.marginTop};
+                    margin-bottom: ${customStyles.marginBottom || styles.marginBottom};
                     letter-spacing: ${styles.letterSpacing};
                     transition: ${styles.transition};
                     text-decoration: none;
@@ -661,9 +831,52 @@ class Wizard {
     updateLivePreview() {
         const livePreviewArea = document.getElementById('live-preview-area');
 
-        // Check if we have the necessary data
-        if (!appState.data.oemData || appState.data.selectedCtas.length === 0) {
-            livePreviewArea.innerHTML = '<p class="text-muted">Select CTAs to see preview</p>';
+        // If no OEM selected, show placeholder
+        if (!appState.data.oemData) {
+            livePreviewArea.innerHTML = '<p class="text-muted">Select an OEM to see preview</p>';
+            return;
+        }
+
+        // If OEM selected but no CTAs, show sample button with OEM colors
+        if (appState.data.selectedCtas.length === 0) {
+            utils.clearElement(livePreviewArea);
+            const oemData = appState.data.oemData;
+            const styles = oemData.styles.primary;
+
+            const sampleButton = utils.createElement('a', {
+                className: 'demo-cta',
+                href: '#',
+                style: `
+                    display: block;
+                    text-align: center;
+                    background-color: ${styles.backgroundColor};
+                    color: ${styles.textColor};
+                    border: ${styles.borderWidth} solid ${styles.borderColor};
+                    border-radius: ${styles.borderRadius};
+                    text-transform: ${styles.textTransform};
+                    font-size: ${styles.fontSize};
+                    font-weight: ${styles.fontWeight};
+                    padding: ${styles.padding};
+                    margin-top: ${styles.marginTop};
+                    margin-bottom: ${styles.marginBottom};
+                    letter-spacing: ${styles.letterSpacing};
+                    transition: ${styles.transition};
+                    text-decoration: none;
+                    cursor: pointer;
+                `
+            }, `Sample ${oemData.name} Button`);
+
+            // Hover effects
+            sampleButton.onmouseenter = () => {
+                sampleButton.style.backgroundColor = styles.hoverBackgroundColor;
+                sampleButton.style.color = styles.hoverTextColor;
+            };
+            sampleButton.onmouseleave = () => {
+                sampleButton.style.backgroundColor = styles.backgroundColor;
+                sampleButton.style.color = styles.textColor;
+            };
+
+            livePreviewArea.appendChild(sampleButton);
             return;
         }
 
