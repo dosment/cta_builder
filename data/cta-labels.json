@@ -46,8 +46,9 @@
     "default": "Value My Trade",
     "displayName": "Trade",
     "options": [
-      "Value My Trade",
       "Value Your Trade",
+      "Value My Trade",
+      "Get a 10‑Second Trade Value",
       "Get Trade Value",
       "Trade Appraisal",
       "Sell Us Your Car"
@@ -66,6 +67,8 @@
     "options": [
       "Schedule Test Drive",
       "Schedule a Test Drive",
+      "Schedule VIP Test Drive",
+      "Schedule Test Drive at Home",
       "Book Test Drive",
       "Test Drive"
     ],
@@ -81,8 +84,9 @@
     "default": "Pre-Qualify",
     "displayName": "Pre-Qualify",
     "options": [
-      "Pre-Qualify",
       "Get Pre-Qualified",
+      "Get Pre-Approved",
+      "Pre-Qualify",
       "Check My Credit",
       "Pre-Qualification"
     ],
@@ -100,6 +104,9 @@
     "displayName": "E-Price",
     "options": [
       "Get E-Price",
+      "Get Today's Price",
+      "Unlock E-Price",
+      "Get Your [Dealer] Price",
       "E-Price",
       "See E-Price",
       "Get My Price"
