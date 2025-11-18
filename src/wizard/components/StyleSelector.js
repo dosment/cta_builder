@@ -263,7 +263,7 @@ export class StyleSelector {
             style: 'width: 100px; text-transform: uppercase;'
         });
 
-        colorPicker.oninput = (e) => {
+        colorPicker.onchange = (e) => {
             const value = e.target.value;
             colorText.value = value.toUpperCase();
             onChange(value);
