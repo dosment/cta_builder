@@ -27,6 +27,11 @@ export class NavigationManager {
         document.getElementById('prev-btn').addEventListener('click', () => this.handlePrev());
 
         // Next button is handled dynamically in updateNavigationButtons
+
+        // Update progress bar on window resize to maintain accuracy
+        window.addEventListener('resize', () => {
+            this.updateProgressBar(this.appState.currentStep);
+        });
     }
 
     /**
@@ -67,8 +72,9 @@ export class NavigationManager {
     updateProgressBar(stepNumber) {
         const totalSteps = this.appState.totalSteps;
         const progressBar = document.querySelector('.progress-bar');
+        const progressSteps = document.querySelectorAll('.progress-step');
 
-        document.querySelectorAll('.progress-step').forEach((step, index) => {
+        progressSteps.forEach((step, index) => {
             const num = index + 1;
             if (num < stepNumber) {
                 step.classList.add('completed');
@@ -82,9 +88,21 @@ export class NavigationManager {
         });
 
         // Update the thick progress line width
-        if (progressBar) {
-            const progressPercent = ((stepNumber - 1) / (totalSteps - 1)) * 100;
-            progressBar.style.setProperty('--progress-width', `${progressPercent}%`);
+        // Calculate the position to the center of the current step circle
+        if (progressBar && progressSteps.length > 0) {
+            // Get the position of the current step
+            const currentStepElement = progressSteps[stepNumber - 1];
+            if (currentStepElement) {
+                const progressBarRect = progressBar.getBoundingClientRect();
+                const stepRect = currentStepElement.getBoundingClientRect();
+
+                // Calculate the center of the step circle relative to the progress bar
+                const stepCenterX = stepRect.left + (stepRect.width / 2) - progressBarRect.left;
+                const progressBarWidth = progressBarRect.width;
+                const progressPercent = (stepCenterX / progressBarWidth) * 100;
+
+                progressBar.style.setProperty('--progress-width', `${progressPercent}%`);
+            }
         }
     }
 
