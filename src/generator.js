@@ -125,6 +125,27 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         css += '}\n\n';
     }
 
+    // Device visibility classes using media queries
+    css += '/* Mobile-only visibility */\n';
+    css += '.cn-mobile-only {\n';
+    css += '    display: block;\n';
+    css += '}\n\n';
+    css += '@media (min-width: 768px) {\n';
+    css += '    .cn-mobile-only {\n';
+    css += '        display: none !important;\n';
+    css += '    }\n';
+    css += '}\n\n';
+
+    css += '/* Desktop-only visibility */\n';
+    css += '.cn-desktop-only {\n';
+    css += '    display: none;\n';
+    css += '}\n\n';
+    css += '@media (min-width: 768px) {\n';
+    css += '    .cn-desktop-only {\n';
+    css += '        display: block !important;\n';
+    css += '    }\n';
+    css += '}\n\n';
+
     css += '</style>';
 
     return css;
