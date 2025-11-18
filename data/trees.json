@@ -4,25 +4,29 @@
       "category": "confirm_availability",
       "label": "Check Availability",
       "options": [
-        { "id": "2000_V2_LHN_CONFIRM", "label": "2000 V2 LHN Confirm (LHN-enabled)" },
+        { "id": "2000_V2_LHN_CONFIRM", "label": "2000 V2 LHN Confirm" },
+        { "id": "3000_V2_CONFIRM_DR", "label": "3000 V2 Confirm DR" },
         { "id": "AMSI_CHECK_AVAILABILITY_DR", "label": "AMSI Check Availability DR" },
         { "id": "AUTONISSAN_CHECK_DR_FINAL_3", "label": "AutoNissan Check DR Final 3" },
         { "id": "CHECK_AVAILABILITY_2022UPDATED", "label": "Check Availability 2022 Updated" },
         { "id": "CN_CONFIRM_AVAILABILITY", "label": "CN Confirm Availability" },
+        { "id": "CONFIRM_AVAILABILITY", "label": "Confirm Availability" },
         { "id": "CONVERT_CONFIRM_AVAILABILITY", "label": "Convert - Confirm Availability" },
-        { "id": "YARK_AVAILABILITY_NO_DR", "label": "Yark Availability (No DR)" }
+        { "id": "YARK_AVAILABILITY_NO_DR", "label": "Yark Availability" }
       ]
     },
     {
       "category": "test_drive",
       "label": "Schedule Test Drive",
       "options": [
+        { "id": "1000_TEST_DRIVE_POKE", "label": "1000 Test Drive Poke" },
         { "id": "1000_V2_TEST_DRIVE", "label": "1000 V2 Test Drive" },
-        { "id": "2000_V2_DN_TEST_DRIVE", "label": "2000 V2 DN Test Drive (LHN/DealNow)" },
+        { "id": "2000_V2_DN_TEST_DRIVE", "label": "2000 V2 DN Test Drive" },
         { "id": "3000_V2_TEST_DRIVE", "label": "3000 V2 Test Drive" },
         { "id": "3000_V2_TEST_DRIVE_DR", "label": "3000 V2 Test Drive DR" },
         { "id": "AMSI_3000_V2_TEST_DRIVE_DR", "label": "AMSI 3000 V2 Test Drive DR" },
-        { "id": "CONVERT_TEST_DRIVE", "label": "Convert - Test Drive" }
+        { "id": "CONVERT_TEST_DRIVE", "label": "Convert - Test Drive" },
+        { "id": "TESTDRIVE_TRADE_SRP", "label": "Test Drive Trade SRP" }
       ]
     },
     {
@@ -30,12 +34,15 @@
       "label": "E-Price / Get E-Price",
       "options": [
         { "id": "1000_V2_EPRICE", "label": "1000 V2 E-Price" },
-        { "id": "2000_V2_DN_EPRICE", "label": "2000 V2 DN E-Price (LHN/DealNow)" },
+        { "id": "2000_V2_DN_EPRICE", "label": "2000 V2 DN E-Price" },
         { "id": "3000_V2_EPRICE_DR", "label": "3000 V2 E-Price DR" },
         { "id": "3000_V2_EPRICE_DR_MCD", "label": "3000 V2 E-Price DR MCD" },
+        { "id": "CN_E_PRICE_NO_DR", "label": "CN E-Price" },
         { "id": "CONVERT_E_PRICE", "label": "Convert - E-Price" },
         { "id": "E_PRICE_SF_HD", "label": "E-Price SF HD" },
-        { "id": "LOWE_EPRICE_DR", "label": "Lowe E-Price DR" }
+        { "id": "LOWE_EPRICE_DR", "label": "Lowe E-Price DR" },
+        { "id": "TODAYS_PRICE_N", "label": "Today's Price (New)" },
+        { "id": "TODAYS_PRICE_U", "label": "Today's Price (Used)" }
       ]
     },
     {
@@ -54,12 +61,13 @@
       "label": "Value Trade / Sell Us Your Car",
       "options": [
         { "id": "1000_V2_TRADE_TRIM", "label": "1000 V2 Trade Trim" },
-        { "id": "2000_V2_DN_TRADE_TRIM", "label": "2000 V2 DN Trade Trim (LHN/DealNow)" },
+        { "id": "2000_V2_DN_TRADE_TRIM", "label": "2000 V2 DN Trade Trim" },
         { "id": "3000_V2_TRADE_TRIM_DR", "label": "3000 V2 Trade Trim DR" },
         { "id": "CONVERT_VALUE_TRADE", "label": "Convert - Value Trade" },
         { "id": "DN_TRADE_TREE", "label": "DN Trade Tree" },
         { "id": "Trade_APP", "label": "Trade App" },
         { "id": "TRADE_VISIT", "label": "Trade Visit" },
+        { "id": "VINCUE_TRADE", "label": "Vincue Trade" },
         { "id": "VINCUE_TRADE_DR", "label": "Vincue Trade DR" }
       ]
     }
