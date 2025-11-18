@@ -94,14 +94,18 @@ export class NavigationManager {
             const currentStepElement = progressSteps[stepNumber - 1];
             if (currentStepElement) {
                 const progressBarRect = progressBar.getBoundingClientRect();
-                const stepRect = currentStepElement.getBoundingClientRect();
+                const stepNumberElement = currentStepElement.querySelector('.step-number');
 
-                // Calculate the center of the step circle relative to the progress bar
-                const stepCenterX = stepRect.left + (stepRect.width / 2) - progressBarRect.left;
-                const progressBarWidth = progressBarRect.width;
-                const progressPercent = (stepCenterX / progressBarWidth) * 100;
+                if (stepNumberElement) {
+                    const stepNumberRect = stepNumberElement.getBoundingClientRect();
 
-                progressBar.style.setProperty('--progress-width', `${progressPercent}%`);
+                    // Calculate the center of the step number circle relative to the progress bar
+                    const stepCenterX = stepNumberRect.left + (stepNumberRect.width / 2) - progressBarRect.left;
+                    const progressBarWidth = progressBarRect.width;
+                    const progressPercent = (stepCenterX / progressBarWidth) * 100;
+
+                    progressBar.style.setProperty('--progress-width', `${progressPercent}%`);
+                }
             }
         }
     }
