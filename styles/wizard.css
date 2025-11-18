@@ -407,6 +407,18 @@ select[id^="tree-"] option {
     margin-top: 12px;
     width: 100%;
     max-width: 100%;
+    overflow: hidden;
+}
+
+.custom-color-row .config-field {
+    min-width: 0;
+    flex: 1;
+}
+
+.style-selection-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .config-field {
