@@ -4,11 +4,11 @@
     "displayName": "Payments",
     "options": [
       "Personalize My Payment",
+      "Calculate My Payment",
       "Explore My Payments",
-      "Get My Payment",
+      "Explore Payment Options",
       "Build My Deal",
-      "See My Options",
-      "Digital Retailing"
+      "See My Options"
     ],
     "supportsDeeplink": true,
     "requiresTree": false,
@@ -69,8 +69,7 @@
       "Schedule a Test Drive",
       "Schedule VIP Test Drive",
       "Schedule Test Drive at Home",
-      "Book Test Drive",
-      "Test Drive"
+      "Book Test Drive"
     ],
     "supportsDeeplink": true,
     "requiresTree": true,
@@ -107,7 +106,6 @@
       "Get Today's Price",
       "Unlock E-Price",
       "Get Your [Dealer] Price",
-      "E-Price",
       "See E-Price",
       "Get My Price"
     ],
