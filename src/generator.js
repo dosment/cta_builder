@@ -320,6 +320,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
         const label = config.useCustomLabel
             ? (config.customLabel || config.label)
             : config.label;
+        const safeLabel = utils.escapeHtml(label);
 
         // Add mobile/desktop wrappers if specified
         let openWrapper = '';
@@ -339,7 +340,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
         // Add all attributes including class
         html += generateCtaAttributes(ctaType, config, ctaLabels, placementKey, hasPlacementOverrides);
 
-        html += `>${label}</a>\n`;
+        html += `>${safeLabel}</a>\n`;
         html += `    </div>${closeWrapper}\n`;
     });
 

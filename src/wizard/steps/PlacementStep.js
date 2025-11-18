@@ -59,7 +59,9 @@ export class PlacementStep {
         const srpLabel = utils.createElement('label', { for: `srp-${ctaType}` }, 'SRP');
 
         const handleSrpChange = () => {
-            const newPlacement = { ...config.placement, srp: srpCheckbox.checked };
+            const latestConfig = this.appState.getCtaConfig(ctaType);
+            const currentPlacement = latestConfig?.placement || config.placement;
+            const newPlacement = { ...currentPlacement, srp: srpCheckbox.checked };
             this.appState.updateCtaConfig(ctaType, {
                 placement: newPlacement
             });
@@ -99,7 +101,9 @@ export class PlacementStep {
         const vdpLabel = utils.createElement('label', { for: `vdp-${ctaType}` }, 'VDP');
 
         const handleVdpChange = () => {
-            const newPlacement = { ...config.placement, vdp: vdpCheckbox.checked };
+            const latestConfig = this.appState.getCtaConfig(ctaType);
+            const currentPlacement = latestConfig?.placement || config.placement;
+            const newPlacement = { ...currentPlacement, vdp: vdpCheckbox.checked };
             this.appState.updateCtaConfig(ctaType, {
                 placement: newPlacement
             });
@@ -171,9 +175,11 @@ export class PlacementStep {
 
         deviceSelect.onchange = (e) => {
             const value = e.target.value;
+            const latestConfig = this.appState.getCtaConfig(ctaType);
+            const currentPlacement = latestConfig?.placement || config.placement;
             this.appState.updateCtaConfig(ctaType, {
                 placement: {
-                    ...config.placement,
+                    ...currentPlacement,
                     mobileOnly: value === 'mobile',
                     desktopOnly: value === 'desktop'
                 }

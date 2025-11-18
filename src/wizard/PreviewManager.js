@@ -226,7 +226,10 @@ export class PreviewManager {
                 button.style.color = appliedStyles.textColor;
             };
 
-            container.appendChild(button);
+            // Wrap button in a div to match generated HTML structure
+            const wrapper = utils.createElement('div', {});
+            wrapper.appendChild(button);
+            container.appendChild(wrapper);
             rendered++;
         });
 

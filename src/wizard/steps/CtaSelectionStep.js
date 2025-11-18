@@ -41,11 +41,13 @@ export class CtaSelectionStep {
 
             // Make the entire div clickable
             checkboxItem.onclick = (e) => {
-                // Prevent double-triggering if the checkbox itself was clicked
-                if (e.target !== checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    this.handleCtaSelectionChange();
+                const target = e.target;
+                // Ignore clicks that originated on the checkbox or its label since the browser handles those
+                if (target === checkbox || target.tagName === 'LABEL') {
+                    return;
                 }
+                checkbox.checked = !checkbox.checked;
+                this.handleCtaSelectionChange();
             };
 
             // Add pointer cursor to indicate clickability

@@ -127,17 +127,7 @@ export class NavigationManager {
             nextBtn.disabled = true;
             nextBtn.classList.add('btn-inactive');
             nextBtn.setAttribute('aria-disabled', 'true');
-
-            // On final step, clicking regenerates code and scrolls to it
-            nextBtn.onclick = () => {
-                if (onRegenerateCode) {
-                    onRegenerateCode();
-                }
-                const codeOutput = document.getElementById('generated-code');
-                if (codeOutput) {
-                    codeOutput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            };
+            nextBtn.onclick = null;
         } else {
             nextBtn.textContent = 'Next';
             nextBtn.style.display = 'block';

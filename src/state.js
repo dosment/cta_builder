@@ -50,7 +50,7 @@ class AppState {
             marginTop: null,
             marginBottom: null,
             padding: null,
-            textWrap: 'wrap'
+            textWrap: null
         });
 
         return {
@@ -380,11 +380,22 @@ class AppState {
                 // Basic validation - ensure all CTAs have a style type
                 for (const ctaType of this.data.selectedCtas) {
                     const config = this.data.ctaConfigs[ctaType];
+                    const ctaInfo = this.loadedData.ctaLabels[ctaType];
                     if (!config.styleType) {
                         errors.push({
                             field: `style-${ctaType}`,
                             message: 'Please select a style type'
                         });
+                    }
+
+                    if (config.useCustomLabel) {
+                        const hasLabel = config.customLabel && config.customLabel.trim();
+                        if (!hasLabel) {
+                            errors.push({
+                                field: `custom-label-${ctaType}`,
+                                message: `Enter custom text for ${ctaInfo.default}`
+                            });
+                        }
                     }
                 }
                 break;
