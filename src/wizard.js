@@ -285,6 +285,18 @@ class Wizard {
 
             checkbox.onchange = () => this.handleCtaSelectionChange();
 
+            // Make the entire div clickable
+            checkboxItem.onclick = (e) => {
+                // Prevent double-triggering if the checkbox itself was clicked
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    this.handleCtaSelectionChange();
+                }
+            };
+
+            // Add pointer cursor to indicate clickability
+            checkboxItem.style.cursor = 'pointer';
+
             checkboxItem.appendChild(checkbox);
             checkboxItem.appendChild(label);
             container.appendChild(checkboxItem);
@@ -446,6 +458,9 @@ class Wizard {
                 });
                 // Clear validation error
                 utils.clearFieldError(`tree-${ctaType}`);
+                // Re-render to remove custom tree input field
+                this.renderTreeConfiguration();
+                this.setupValidationWatching();
             }
         };
 
@@ -681,6 +696,7 @@ class Wizard {
                     customLabel: '',
                     label: e.target.value
                 });
+                this.renderStylingConfiguration(); // Re-render to disable custom input
                 this.updateLivePreview(); // Update preview when label changes
             }
         };
@@ -727,6 +743,7 @@ class Wizard {
     }
 
     createStyleSelection(ctaType, config) {
+        const container = utils.createElement('div', { className: 'config-row', style: 'flex-direction: column;' });
         const row = utils.createElement('div', { className: 'config-row' });
 
         const styleField = utils.createElement('div', { className: 'config-field' });
@@ -734,27 +751,204 @@ class Wizard {
         const styleSelect = utils.createElement('select', { id: `style-${ctaType}` });
 
         const oemData = appState.data.oemData;
+        const useCustomStyle = config.styleType === '__custom__';
+
         if (oemData && oemData.styles) {
             Object.keys(oemData.styles).forEach(styleKey => {
                 const styleInfo = oemData.styles[styleKey];
                 const option = utils.createElement('option', {
                     value: styleKey,
-                    selected: config.styleType === styleKey
+                    selected: !useCustomStyle && config.styleType === styleKey
                 }, styleInfo.label);
                 styleSelect.appendChild(option);
             });
         }
 
+        // Add Custom option
+        const customOption = utils.createElement('option', {
+            value: '__custom__',
+            selected: useCustomStyle
+        }, 'Custom');
+        styleSelect.appendChild(customOption);
+
         styleSelect.onchange = (e) => {
-            appState.updateCtaConfig(ctaType, { styleType: e.target.value });
-            this.updateLivePreview(); // Update preview when style changes
+            if (e.target.value === '__custom__') {
+                appState.updateCtaConfig(ctaType, {
+                    styleType: '__custom__',
+                    customStyle: config.customStyle || {
+                        backgroundColor: '#000000',
+                        textColor: '#ffffff',
+                        borderColor: '#000000'
+                    }
+                });
+                this.renderStylingConfiguration();
+            } else {
+                appState.updateCtaConfig(ctaType, {
+                    styleType: e.target.value,
+                    customStyle: null
+                });
+                this.renderStylingConfiguration();
+                this.updateLivePreview();
+            }
         };
 
         styleField.appendChild(styleLabel);
         styleField.appendChild(styleSelect);
         row.appendChild(styleField);
+        container.appendChild(row);
 
-        return row;
+        // Show custom color inputs if custom style is selected
+        if (useCustomStyle) {
+            const colorRow = utils.createElement('div', {
+                className: 'config-row',
+                style: 'margin-top: 12px; gap: 12px;'
+            });
+
+            // Background Color
+            const bgColorField = utils.createElement('div', {
+                className: 'config-field',
+                style: 'display: flex; flex-direction: column; gap: 4px;'
+            });
+            const bgColorLabel = utils.createElement('label', {}, 'Background:');
+            const bgColorWrapper = utils.createElement('div', {
+                style: 'display: flex; gap: 8px; align-items: center;'
+            });
+            const bgColorInput = utils.createElement('input', {
+                type: 'color',
+                id: `custom-bg-picker-${ctaType}`,
+                value: config.customStyle?.backgroundColor || '#000000',
+                style: 'width: 50px; height: 35px; cursor: pointer;'
+            });
+            const bgColorText = utils.createElement('input', {
+                type: 'text',
+                id: `custom-bg-text-${ctaType}`,
+                value: config.customStyle?.backgroundColor || '#000000',
+                placeholder: '#000000',
+                style: 'flex: 1; text-transform: uppercase;'
+            });
+
+            bgColorInput.oninput = (e) => {
+                const newCustomStyle = { ...config.customStyle, backgroundColor: e.target.value };
+                appState.updateCtaConfig(ctaType, { customStyle: newCustomStyle });
+                bgColorText.value = e.target.value.toUpperCase();
+                this.updateLivePreview();
+            };
+
+            bgColorText.oninput = (e) => {
+                const value = e.target.value.trim();
+                // Validate hex color format
+                if (/^#[0-9A-Fa-f]{6}$/.test(value) || /^#[0-9A-Fa-f]{3}$/.test(value)) {
+                    const newCustomStyle = { ...config.customStyle, backgroundColor: value };
+                    appState.updateCtaConfig(ctaType, { customStyle: newCustomStyle });
+                    bgColorInput.value = value;
+                    this.updateLivePreview();
+                }
+            };
+
+            bgColorWrapper.appendChild(bgColorInput);
+            bgColorWrapper.appendChild(bgColorText);
+            bgColorField.appendChild(bgColorLabel);
+            bgColorField.appendChild(bgColorWrapper);
+            colorRow.appendChild(bgColorField);
+
+            // Text Color
+            const textColorField = utils.createElement('div', {
+                className: 'config-field',
+                style: 'display: flex; flex-direction: column; gap: 4px;'
+            });
+            const textColorLabel = utils.createElement('label', {}, 'Text:');
+            const textColorWrapper = utils.createElement('div', {
+                style: 'display: flex; gap: 8px; align-items: center;'
+            });
+            const textColorInput = utils.createElement('input', {
+                type: 'color',
+                id: `custom-text-picker-${ctaType}`,
+                value: config.customStyle?.textColor || '#ffffff',
+                style: 'width: 50px; height: 35px; cursor: pointer;'
+            });
+            const textColorText = utils.createElement('input', {
+                type: 'text',
+                id: `custom-text-text-${ctaType}`,
+                value: config.customStyle?.textColor || '#ffffff',
+                placeholder: '#ffffff',
+                style: 'flex: 1; text-transform: uppercase;'
+            });
+
+            textColorInput.oninput = (e) => {
+                const newCustomStyle = { ...config.customStyle, textColor: e.target.value };
+                appState.updateCtaConfig(ctaType, { customStyle: newCustomStyle });
+                textColorText.value = e.target.value.toUpperCase();
+                this.updateLivePreview();
+            };
+
+            textColorText.oninput = (e) => {
+                const value = e.target.value.trim();
+                // Validate hex color format
+                if (/^#[0-9A-Fa-f]{6}$/.test(value) || /^#[0-9A-Fa-f]{3}$/.test(value)) {
+                    const newCustomStyle = { ...config.customStyle, textColor: value };
+                    appState.updateCtaConfig(ctaType, { customStyle: newCustomStyle });
+                    textColorInput.value = value;
+                    this.updateLivePreview();
+                }
+            };
+
+            textColorWrapper.appendChild(textColorInput);
+            textColorWrapper.appendChild(textColorText);
+            textColorField.appendChild(textColorLabel);
+            textColorField.appendChild(textColorWrapper);
+            colorRow.appendChild(textColorField);
+
+            // Border Color
+            const borderColorField = utils.createElement('div', {
+                className: 'config-field',
+                style: 'display: flex; flex-direction: column; gap: 4px;'
+            });
+            const borderColorLabel = utils.createElement('label', {}, 'Border:');
+            const borderColorWrapper = utils.createElement('div', {
+                style: 'display: flex; gap: 8px; align-items: center;'
+            });
+            const borderColorInput = utils.createElement('input', {
+                type: 'color',
+                id: `custom-border-picker-${ctaType}`,
+                value: config.customStyle?.borderColor || '#000000',
+                style: 'width: 50px; height: 35px; cursor: pointer;'
+            });
+            const borderColorText = utils.createElement('input', {
+                type: 'text',
+                id: `custom-border-text-${ctaType}`,
+                value: config.customStyle?.borderColor || '#000000',
+                placeholder: '#000000',
+                style: 'flex: 1; text-transform: uppercase;'
+            });
+
+            borderColorInput.oninput = (e) => {
+                const newCustomStyle = { ...config.customStyle, borderColor: e.target.value };
+                appState.updateCtaConfig(ctaType, { customStyle: newCustomStyle });
+                borderColorText.value = e.target.value.toUpperCase();
+                this.updateLivePreview();
+            };
+
+            borderColorText.oninput = (e) => {
+                const value = e.target.value.trim();
+                // Validate hex color format
+                if (/^#[0-9A-Fa-f]{6}$/.test(value) || /^#[0-9A-Fa-f]{3}$/.test(value)) {
+                    const newCustomStyle = { ...config.customStyle, borderColor: value };
+                    appState.updateCtaConfig(ctaType, { customStyle: newCustomStyle });
+                    borderColorInput.value = value;
+                    this.updateLivePreview();
+                }
+            };
+
+            borderColorWrapper.appendChild(borderColorInput);
+            borderColorWrapper.appendChild(borderColorText);
+            borderColorField.appendChild(borderColorLabel);
+            borderColorField.appendChild(borderColorWrapper);
+            colorRow.appendChild(borderColorField);
+
+            container.appendChild(colorRow);
+        }
+
+        return container;
     }
 
     // Step 5: Advanced Styling Configuration
@@ -784,7 +978,7 @@ class Wizard {
 
         // Font family
         const fontFamilies = [
-            { value: '', label: 'Use OEM Font' },
+            { value: '', label: 'Inherit from site' },
             { value: 'Arial, sans-serif', label: 'Arial' },
             { value: '\'Roboto\', sans-serif', label: 'Roboto' },
             { value: '\'Montserrat\', sans-serif', label: 'Montserrat' },
@@ -812,7 +1006,7 @@ class Wizard {
 
         // Font weight
         const fontWeights = [
-            { value: '', label: 'Use OEM Weight' },
+            { value: '', label: 'Inherit from site' },
             { value: '400', label: 'Regular (400)' },
             { value: '500', label: 'Medium (500)' },
             { value: '600', label: 'Semi-bold (600)' },
@@ -1246,8 +1440,27 @@ class Wizard {
             const placement = this.resolvePlacementForPreview(config, mode);
             if (!placement) return;
 
-            const styles = oemData.styles[config.styleType] || oemData.styles.primary;
-            const appliedStyles = this.getPreviewStyles(styles, placement);
+            // Handle custom styles
+            let styles, appliedStyles;
+            if (config.styleType === '__custom__' && config.customStyle) {
+                // Use custom colors
+                styles = {
+                    backgroundColor: config.customStyle.backgroundColor,
+                    textColor: config.customStyle.textColor,
+                    borderColor: config.customStyle.borderColor,
+                    borderWidth: '2px',
+                    textTransform: 'none',
+                    hoverBackgroundColor: config.customStyle.textColor, // Swap on hover
+                    hoverTextColor: config.customStyle.backgroundColor,
+                    transition: 'all 0.3s ease'
+                };
+                appliedStyles = this.getPreviewStyles(styles, placement);
+            } else {
+                // Use OEM styles
+                styles = oemData.styles[config.styleType] || oemData.styles.primary;
+                appliedStyles = this.getPreviewStyles(styles, placement);
+            }
+
             const buttonLabel = config.useCustomLabel
                 ? (config.customLabel || config.label)
                 : config.label;

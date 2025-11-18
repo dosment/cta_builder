@@ -152,6 +152,7 @@ class AppState {
             dept: defaultDept,
             customDept: defaultCustomDept,
             styleType: 'primary',
+            customStyle: null,
             placement: {
                 srp: true,
                 vdp: true,

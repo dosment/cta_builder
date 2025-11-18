@@ -62,17 +62,22 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     css += '}\n\n';
 
     const styleTypeMap = new Map();
+    const customStyleMap = new Map(); // Track custom styles by ctaType
 
     selectedCtas.forEach(ctaType => {
         const config = ctaConfigs[ctaType];
         const styleType = utils.sanitizeCssClassName(config.styleType || 'primary');
 
-        if (!styleTypeMap.has(styleType)) {
+        if (config.styleType === '__custom__' && config.customStyle) {
+            // Store custom style with unique identifier
+            customStyleMap.set(ctaType, config.customStyle);
+        } else if (!styleTypeMap.has(styleType)) {
             const styles = oemData.styles[config.styleType] || oemData.styles.primary;
             styleTypeMap.set(styleType, styles);
         }
     });
 
+    // Generate standard OEM styles
     styleTypeMap.forEach((styleData, styleType) => {
         if (!styleData) return;
 
@@ -83,6 +88,24 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         css += `.demo-cta-${styleType}:hover {\n`;
         css += `    background-color: ${styleData.hoverBackgroundColor};\n`;
         css += `    color: ${styleData.hoverTextColor};\n`;
+        css += '}\n\n';
+    });
+
+    // Generate custom styles for each CTA with custom styling
+    customStyleMap.forEach((customStyle, ctaType) => {
+        const sanitizedType = utils.sanitizeCssClassName(ctaType);
+        css += `.demo-cta-custom-${sanitizedType} {\n`;
+        css += `    background-color: ${customStyle.backgroundColor};\n`;
+        css += `    color: ${customStyle.textColor};\n`;
+        css += `    border-color: ${customStyle.borderColor};\n`;
+        css += `    border-width: 2px;\n`;
+        css += `    text-transform: none;\n`;
+        css += `    transition: all 0.3s ease;\n`;
+        css += '}\n\n';
+
+        css += `.demo-cta-custom-${sanitizedType}:hover {\n`;
+        css += `    background-color: ${customStyle.textColor};\n`;
+        css += `    color: ${customStyle.backgroundColor};\n`;
         css += '}\n\n';
     });
 
@@ -197,7 +220,15 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
  */
 function generateCtaAttributes(ctaType, config, ctaLabels) {
     let attrs = '';
-    const styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
+    let styleClass;
+
+    // Handle custom styles with unique class name
+    if (config.styleType === '__custom__') {
+        styleClass = `custom-${utils.sanitizeCssClassName(ctaType)}`;
+    } else {
+        styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
+    }
+
     const baseClass = `demo-cta demo-cta-${styleClass}`;
     let className = baseClass;
 
