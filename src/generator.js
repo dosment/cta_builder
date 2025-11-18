@@ -109,8 +109,13 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         css += '}\n\n';
     });
 
-    css += buildPlacementOverride('srp', advancedStyles.srp, oemData.styles.primary);
-    css += buildPlacementOverride('vdp', advancedStyles.vdp, oemData.styles.secondary || oemData.styles.primary);
+    // Use unified 'buttons' styling if not separated, otherwise use placement-specific
+    const separateStyling = advancedStyles.separateStyling || false;
+    const srpStyles = separateStyling ? (advancedStyles.srp || {}) : (advancedStyles.buttons || {});
+    const vdpStyles = separateStyling ? (advancedStyles.vdp || {}) : (advancedStyles.buttons || {});
+
+    css += buildPlacementOverride('srp', srpStyles, oemData.styles.primary);
+    css += buildPlacementOverride('vdp', vdpStyles, oemData.styles.secondary || oemData.styles.primary);
 
     // Special CSS for deeplinked CTAs
     const hasDeeplink = selectedCtas.some(type => ctaConfigs[type].useDeeplink);

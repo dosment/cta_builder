@@ -283,6 +283,11 @@ export class TypographyControls {
             return {};
         }
 
+        if (placement === 'buttons') {
+            // Unified buttons use primary style as base
+            return oemData.styles.primary || {};
+        }
+
         if (placement === 'srp') {
             return oemData.styles.primary || {};
         }

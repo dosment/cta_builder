@@ -179,12 +179,15 @@ class AppState {
     }
 
     updateAdvancedStyles(placement, updates) {
-        if (this.data.advancedStyles[placement]) {
-            this.data.advancedStyles[placement] = {
-                ...this.data.advancedStyles[placement],
-                ...updates
-            };
+        // Ensure the placement object exists
+        if (!this.data.advancedStyles[placement]) {
+            this.data.advancedStyles[placement] = {};
         }
+
+        this.data.advancedStyles[placement] = {
+            ...this.data.advancedStyles[placement],
+            ...updates
+        };
     }
 
     /**
