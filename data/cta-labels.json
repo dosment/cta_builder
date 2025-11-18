@@ -3,12 +3,16 @@
     "default": "Personalize My Payment",
     "displayName": "Payments",
     "options": [
-      "Personalize My Payment",
+      "Estimate My Payment",
+      "Estimate My Payments",
       "Calculate My Payment",
+      "Personalize My Payment",
+      "Personalize Payments",
+      "Explore Payments",
       "Explore My Payments",
-      "Explore Payment Options",
       "Build My Deal",
-      "See My Options"
+      "Build Your Deal",
+      "Customize Payment"
     ],
     "supportsDeeplink": true,
     "requiresTree": false,
