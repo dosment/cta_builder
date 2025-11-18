@@ -58,8 +58,8 @@ export class PlacementStep {
         });
         const srpLabel = utils.createElement('label', { for: `srp-${ctaType}` }, 'SRP');
 
-        srpCheckbox.onchange = (e) => {
-            const newPlacement = { ...config.placement, srp: e.target.checked };
+        const handleSrpChange = () => {
+            const newPlacement = { ...config.placement, srp: srpCheckbox.checked };
             this.appState.updateCtaConfig(ctaType, {
                 placement: newPlacement
             });
@@ -70,6 +70,20 @@ export class PlacementStep {
             // Update live preview
             this.previewManager.updateLivePreview();
         };
+
+        srpCheckbox.onchange = handleSrpChange;
+
+        // Make the entire div clickable
+        srpField.onclick = (e) => {
+            // Prevent double-triggering if the checkbox itself was clicked
+            if (e.target !== srpCheckbox) {
+                srpCheckbox.checked = !srpCheckbox.checked;
+                handleSrpChange();
+            }
+        };
+
+        // Add pointer cursor to indicate clickability
+        srpField.style.cursor = 'pointer';
 
         srpField.appendChild(srpCheckbox);
         srpField.appendChild(srpLabel);
@@ -84,8 +98,8 @@ export class PlacementStep {
         });
         const vdpLabel = utils.createElement('label', { for: `vdp-${ctaType}` }, 'VDP');
 
-        vdpCheckbox.onchange = (e) => {
-            const newPlacement = { ...config.placement, vdp: e.target.checked };
+        const handleVdpChange = () => {
+            const newPlacement = { ...config.placement, vdp: vdpCheckbox.checked };
             this.appState.updateCtaConfig(ctaType, {
                 placement: newPlacement
             });
@@ -96,6 +110,20 @@ export class PlacementStep {
             // Update live preview
             this.previewManager.updateLivePreview();
         };
+
+        vdpCheckbox.onchange = handleVdpChange;
+
+        // Make the entire div clickable
+        vdpField.onclick = (e) => {
+            // Prevent double-triggering if the checkbox itself was clicked
+            if (e.target !== vdpCheckbox) {
+                vdpCheckbox.checked = !vdpCheckbox.checked;
+                handleVdpChange();
+            }
+        };
+
+        // Add pointer cursor to indicate clickability
+        vdpField.style.cursor = 'pointer';
 
         vdpField.appendChild(vdpCheckbox);
         vdpField.appendChild(vdpLabel);
