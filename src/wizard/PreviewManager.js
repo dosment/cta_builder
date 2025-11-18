@@ -174,7 +174,7 @@ export class PreviewManager {
                 appliedStyles = this.getPreviewStyles(styles, placement);
             } else {
                 // Use OEM styles
-                styles = oemData.styles[config.styleType] || oemData.styles.primary;
+                styles = oemData.styles[config.styleType] || oemData.styles.oemTestFilled;
                 appliedStyles = this.getPreviewStyles(styles, placement);
             }
 
@@ -182,7 +182,7 @@ export class PreviewManager {
                 ? (config.customLabel || config.label)
                 : config.label;
 
-            const styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
+            const styleClass = utils.sanitizeCssClassName(config.styleType || 'oemTestFilled');
 
             // Add sheen class if enabled for Buy Now buttons
             let classNames = `demo-cta demo-cta-${styleClass}`;

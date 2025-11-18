@@ -66,13 +66,13 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
 
     selectedCtas.forEach(ctaType => {
         const config = ctaConfigs[ctaType];
-        const styleType = utils.sanitizeCssClassName(config.styleType || 'primary');
+        const styleType = utils.sanitizeCssClassName(config.styleType || 'oemTestFilled');
 
         if (config.styleType === '__custom__' && config.customStyle) {
             // Store custom style with unique identifier
             customStyleMap.set(ctaType, config.customStyle);
         } else if (!styleTypeMap.has(styleType)) {
-            const styles = oemData.styles[config.styleType] || oemData.styles.primary;
+            const styles = oemData.styles[config.styleType] || oemData.styles.oemTestFilled;
             styleTypeMap.set(styleType, styles);
         }
     });
@@ -360,7 +360,7 @@ function generateCtaAttributes(ctaType, config, ctaLabels, placement, hasPlaceme
     if (config.styleType === '__custom__') {
         styleClass = `custom-${utils.sanitizeCssClassName(ctaType)}`;
     } else {
-        styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
+        styleClass = utils.sanitizeCssClassName(config.styleType || 'oemTestFilled');
     }
 
     // Only add placement-specific styling class if there are overrides

@@ -154,7 +154,7 @@ class AppState {
             customTree: null,
             dept: defaultDept,
             customDept: defaultCustomDept,
-            styleType: 'primary',
+            styleType: 'oemTestFilled',
             customStyle: null,
             placement: {
                 srp: true,
