@@ -15,7 +15,12 @@ export class TypographyControls {
      * Create typography controls for a placement
      */
     createTypographyControls(placement) {
-        const wrapper = utils.createElement('div', { className: 'config-row' });
+        const wrapper = utils.createElement('div', { className: 'config-group config-card' });
+        const title = utils.createElement('div', { className: 'config-subtitle' }, 'Typography');
+        wrapper.appendChild(title);
+
+        const selectsRow = utils.createElement('div', { className: 'config-grid config-grid-selects' });
+        const slidersRow = utils.createElement('div', { className: 'config-grid config-grid-sliders' });
 
         // Font family
         const fontFamilies = [
@@ -31,7 +36,7 @@ export class TypographyControls {
             'Font Family',
             fontFamilies
         );
-        wrapper.appendChild(fontFamilyField);
+        selectsRow.appendChild(fontFamilyField);
 
         // Text transform
         const textTransforms = [
@@ -47,7 +52,7 @@ export class TypographyControls {
             'Text Transform',
             textTransforms
         );
-        wrapper.appendChild(textTransformField);
+        selectsRow.appendChild(textTransformField);
 
         // Font size slider
         const fontSizeField = this.createPlacementSlider(
@@ -59,7 +64,7 @@ export class TypographyControls {
             1,
             'px'
         );
-        wrapper.appendChild(fontSizeField);
+        slidersRow.appendChild(fontSizeField);
 
         // Font weight
         const fontWeights = [
@@ -75,7 +80,7 @@ export class TypographyControls {
             'Font Weight',
             fontWeights
         );
-        wrapper.appendChild(fontWeightField);
+        selectsRow.appendChild(fontWeightField);
 
         // Line height slider
         const lineHeightField = this.createPlacementSlider(
@@ -87,7 +92,7 @@ export class TypographyControls {
             0.1,
             ''
         );
-        wrapper.appendChild(lineHeightField);
+        slidersRow.appendChild(lineHeightField);
 
         // Letter spacing slider
         const letterSpacingField = this.createPlacementSlider(
@@ -99,7 +104,7 @@ export class TypographyControls {
             0.1,
             'px'
         );
-        wrapper.appendChild(letterSpacingField);
+        slidersRow.appendChild(letterSpacingField);
 
         // Wrap select
         const wrapField = this.createPlacementSelect(
@@ -111,7 +116,10 @@ export class TypographyControls {
                 { value: 'nowrap', label: 'No wrap' }
             ]
         );
-        wrapper.appendChild(wrapField);
+        selectsRow.appendChild(wrapField);
+
+        wrapper.appendChild(selectsRow);
+        wrapper.appendChild(slidersRow);
 
         return wrapper;
     }
@@ -120,7 +128,12 @@ export class TypographyControls {
      * Create spacing controls for a placement
      */
     createSpacingControls(placement) {
-        const wrapper = utils.createElement('div', { className: 'config-row' });
+        const wrapper = utils.createElement('div', { className: 'config-group config-card' });
+        const title = utils.createElement('div', { className: 'config-subtitle' }, 'Spacing');
+        wrapper.appendChild(title);
+
+        const topRow = utils.createElement('div', { className: 'config-grid config-grid-sliders' });
+        const bottomRow = utils.createElement('div', { className: 'config-grid config-grid-sliders' });
 
         const borderRadiusField = this.createPlacementSlider(
             placement,
@@ -131,7 +144,7 @@ export class TypographyControls {
             1,
             'px'
         );
-        wrapper.appendChild(borderRadiusField);
+        topRow.appendChild(borderRadiusField);
 
         const borderWidthField = this.createPlacementSlider(
             placement,
@@ -142,7 +155,7 @@ export class TypographyControls {
             1,
             'px'
         );
-        wrapper.appendChild(borderWidthField);
+        topRow.appendChild(borderWidthField);
 
         const marginTopField = this.createPlacementSlider(
             placement,
@@ -153,7 +166,7 @@ export class TypographyControls {
             1,
             'px'
         );
-        wrapper.appendChild(marginTopField);
+        bottomRow.appendChild(marginTopField);
 
         const marginBottomField = this.createPlacementSlider(
             placement,
@@ -164,7 +177,7 @@ export class TypographyControls {
             1,
             'px'
         );
-        wrapper.appendChild(marginBottomField);
+        bottomRow.appendChild(marginBottomField);
 
         const paddingField = this.createPlacementSlider(
             placement,
@@ -175,7 +188,10 @@ export class TypographyControls {
             1,
             'px'
         );
-        wrapper.appendChild(paddingField);
+        bottomRow.appendChild(paddingField);
+
+        wrapper.appendChild(topRow);
+        wrapper.appendChild(bottomRow);
 
         return wrapper;
     }
@@ -228,6 +244,7 @@ export class TypographyControls {
         const resolvedValue = this.getResolvedPlacementStyleValue(placement, property);
         const numericValue = this.parseNumericValue(resolvedValue, min);
 
+        const sliderTrack = utils.createElement('div', { className: 'slider-track' });
         const slider = utils.createElement('input', {
             type: 'range',
             id: `${property}-${placement}`,
@@ -252,8 +269,9 @@ export class TypographyControls {
             }
         };
 
-        sliderContainer.appendChild(slider);
-        sliderContainer.appendChild(valueDisplay);
+        sliderTrack.appendChild(slider);
+        sliderTrack.appendChild(valueDisplay);
+        sliderContainer.appendChild(sliderTrack);
         field.appendChild(labelEl);
         field.appendChild(sliderContainer);
 
