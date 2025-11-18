@@ -33,6 +33,22 @@ export class TypographyControls {
         );
         wrapper.appendChild(fontFamilyField);
 
+        // Text transform
+        const textTransforms = [
+            { value: '', label: 'Inherit from site' },
+            { value: 'none', label: 'None' },
+            { value: 'capitalize', label: 'Capitalize' },
+            { value: 'uppercase', label: 'Uppercase' },
+            { value: 'lowercase', label: 'Lowercase' }
+        ];
+        const textTransformField = this.createPlacementSelect(
+            placement,
+            'textTransform',
+            'Text Transform',
+            textTransforms
+        );
+        wrapper.appendChild(textTransformField);
+
         // Font size slider
         const fontSizeField = this.createPlacementSlider(
             placement,
@@ -314,7 +330,8 @@ export class TypographyControls {
             marginTop: '6px',
             marginBottom: '6px',
             padding: '12px',
-            textWrap: 'wrap'
+            textWrap: 'wrap',
+            textTransform: 'none'
         };
 
         return defaults[property] || '';

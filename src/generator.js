@@ -129,6 +129,81 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         css += '}\n\n';
     }
 
+    // Sheen effect CSS (if any CTA has it enabled)
+    const hasSheen = selectedCtas.some(type => ctaConfigs[type].enableSheen);
+    if (hasSheen) {
+        css += '/* Sheen Effect for Buy Now Buttons */\n';
+        css += '.cn-sheen-enabled {\n';
+        css += '    position: relative;\n';
+        css += '    overflow: hidden;\n';
+        css += '    contain: paint;\n';
+        css += '    transform: translateZ(0);\n';
+        css += '}\n\n';
+
+        css += '.cn-sheen-enabled::after {\n';
+        css += '    content: "";\n';
+        css += '    position: absolute;\n';
+        css += '    top: 0;\n';
+        css += '    left: -60%;\n';
+        css += '    height: 100%;\n';
+        css += '    width: 40%;\n';
+        css += '    background: linear-gradient(110deg,\n';
+        css += '        rgba(255,255,255,0) 0%,\n';
+        css += '        rgba(255,255,255,0.35) 45%,\n';
+        css += '        rgba(255,255,255,0.65) 50%,\n';
+        css += '        rgba(255,255,255,0.35) 55%,\n';
+        css += '        rgba(255,255,255,0) 100%);\n';
+        css += '    transform: skewX(-20deg);\n';
+        css += '    pointer-events: none;\n';
+        css += '    opacity: 0.95;\n';
+        css += '    will-change: left;\n';
+        css += '    animation: cn-sheen-cycle 15s ease-out infinite;\n';
+        css += '}\n\n';
+
+        css += '@keyframes cn-sheen-cycle {\n';
+        css += '    0%   { left: -60%; }\n';
+        css += '    4.67% { left: 120%; }\n';
+        css += '    4.68% { left: -60%; }\n';
+        css += '    100% { left: -60%; }\n';
+        css += '}\n\n';
+
+        css += '.cn-sheen-enabled:hover,\n';
+        css += '.cn-sheen-enabled:active {\n';
+        css += '    filter: brightness(1.12);\n';
+        css += '    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.22), inset 0 -8px 12px rgba(0,0,0,0.12);\n';
+        css += '}\n\n';
+
+        // Generate custom timing overrides for each CTA with custom interval
+        selectedCtas.forEach(ctaType => {
+            const config = ctaConfigs[ctaType];
+            if (config.enableSheen) {
+                const interval = config.sheenInterval || 15;
+                const hasCustom = interval !== 15;
+
+                if (hasCustom) {
+                    const sanitizedType = utils.sanitizeCssClassName(ctaType);
+                    // Fixed sweep speed of 0.7s
+                    const sweep = 0.7;
+                    const sweepPercent = ((sweep / interval) * 100).toFixed(2);
+
+                    // Generate custom keyframe animation
+                    const snapPercent = (parseFloat(sweepPercent) + 0.01).toFixed(2);
+                    css += `@keyframes cn-sheen-cycle-${sanitizedType} {\n`;
+                    css += '    0%   { left: -60%; }\n';
+                    css += `    ${sweepPercent}% { left: 120%; }\n`;
+                    css += `    ${snapPercent}% { left: -60%; }\n`;
+                    css += '    100% { left: -60%; }\n';
+                    css += '}\n\n';
+
+                    // Apply custom animation to this CTA
+                    css += `.cn-sheen-${sanitizedType}::after {\n`;
+                    css += `    animation: cn-sheen-cycle-${sanitizedType} ${interval}s ease-out infinite;\n`;
+                    css += '}\n\n';
+                }
+            }
+        });
+    }
+
     // Device visibility classes using media queries
     css += '/* Mobile-only visibility */\n';
     css += '.cn-mobile-only {\n';
@@ -164,6 +239,9 @@ function buildPlacementOverride(placement, overrides = {}) {
     // Typography overrides
     if (overrides.fontFamily) {
         properties.push(`    font-family: ${overrides.fontFamily} !important;`);
+    }
+    if (overrides.textTransform) {
+        properties.push(`    text-transform: ${overrides.textTransform} !important;`);
     }
     if (overrides.fontSize) {
         properties.push(`    font-size: ${overrides.fontSize} !important;`);
@@ -299,6 +377,17 @@ function generateCtaAttributes(ctaType, config, ctaLabels, placement, hasPlaceme
     // Add special class for deeplink
     if (config.useDeeplink) {
         className += ' cn-buy-now';
+    }
+
+    // Add sheen class if enabled
+    if (config.enableSheen) {
+        className += ' cn-sheen-enabled';
+        // Add timing-specific class if custom interval is set
+        const hasCustomInterval = config.sheenInterval && config.sheenInterval !== 15;
+        if (hasCustomInterval) {
+            const sanitizedType = utils.sanitizeCssClassName(ctaType);
+            className += ` cn-sheen-${sanitizedType}`;
+        }
     }
 
     // Always add href for proper anchor behavior

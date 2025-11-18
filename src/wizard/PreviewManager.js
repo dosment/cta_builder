@@ -183,10 +183,36 @@ export class PreviewManager {
                 : config.label;
 
             const styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
+
+            // Add sheen class if enabled for Buy Now buttons
+            let classNames = `demo-cta demo-cta-${styleClass}`;
+            if (config.enableSheen) {
+                classNames += ' cn-sheen-enabled';
+                // Add timing-specific class if custom interval is set
+                const hasCustomInterval = config.sheenInterval && config.sheenInterval !== 15;
+                if (hasCustomInterval) {
+                    const sanitizedType = utils.sanitizeCssClassName(ctaType);
+                    classNames += ` cn-sheen-${sanitizedType}`;
+                }
+            }
+
+            let buttonStyle = this.buildButtonStyle(appliedStyles, config.enableSheen);
+
+            // Add custom sheen animation for live preview if needed
+            if (config.enableSheen) {
+                const interval = config.sheenInterval || 15;
+                const hasCustom = interval !== 15;
+
+                if (hasCustom) {
+                    // Inject custom keyframe for this specific button
+                    this.injectSheenAnimation(ctaType, interval);
+                }
+            }
+
             const button = utils.createElement('a', {
-                className: `demo-cta demo-cta-${styleClass}`,
+                className: classNames,
                 href: '#',
-                style: this.buildButtonStyle(appliedStyles)
+                style: buttonStyle
             }, buttonLabel);
 
             const baseStyles = styles;
@@ -250,7 +276,7 @@ export class PreviewManager {
             borderColor: baseStyles.borderColor,
             borderWidth: resolve('borderWidth'),
             borderRadius: resolve('borderRadius'),
-            textTransform: baseStyles.textTransform,
+            textTransform: resolve('textTransform'),
             fontSize: resolve('fontSize'),
             fontWeight: resolve('fontWeight'),
             fontFamily: resolve('fontFamily'),
@@ -279,17 +305,54 @@ export class PreviewManager {
             marginTop: '6px',
             marginBottom: '6px',
             padding: '12px',
-            textWrap: 'wrap'
+            textWrap: 'wrap',
+            textTransform: 'none'
         };
 
         return defaults[property] || '';
     }
 
     /**
+     * Inject custom sheen animation into page for live preview
+     */
+    injectSheenAnimation(ctaType, interval) {
+        const sanitizedType = utils.sanitizeCssClassName(ctaType);
+        const styleId = `sheen-${sanitizedType}`;
+
+        // Remove existing style if present
+        const existing = document.getElementById(styleId);
+        if (existing) {
+            existing.remove();
+        }
+
+        // Fixed sweep speed of 0.7s, calculate percentage based on interval
+        const sweep = 0.7;
+        const sweepPercent = ((sweep / interval) * 100).toFixed(2);
+        const snapPercent = (parseFloat(sweepPercent) + 0.01).toFixed(2);
+
+        // Create new style element
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            @keyframes cn-sheen-cycle-${sanitizedType} {
+                0%   { left: -60%; }
+                ${sweepPercent}% { left: 120%; }
+                ${snapPercent}% { left: -60%; }
+                100% { left: -60%; }
+            }
+            .cn-sheen-${sanitizedType}::after {
+                animation: cn-sheen-cycle-${sanitizedType} ${interval}s ease-out infinite !important;
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    /**
      * Build button style string
      */
-    buildButtonStyle(styles) {
-        return `
+    buildButtonStyle(styles, hasSheen = false) {
+        let styleString = `
             display: inline-flex;
             width: 100%;
             justify-content: center;
@@ -313,5 +376,15 @@ export class PreviewManager {
             text-decoration: none;
             cursor: pointer;
         `;
+
+        // Add properties required for sheen effect
+        if (hasSheen) {
+            styleString += `
+            position: relative;
+            overflow: hidden;
+            `;
+        }
+
+        return styleString;
     }
 }
