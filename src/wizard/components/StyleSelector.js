@@ -260,7 +260,7 @@ export class StyleSelector {
             id: `custom-${colorType}-text-${ctaType}`,
             value: initialValue,
             placeholder: initialValue,
-            style: 'width: 100px; text-transform: uppercase;'
+            style: 'width: 110px; text-transform: uppercase;'
         });
 
         colorPicker.onchange = (e) => {
