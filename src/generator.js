@@ -9,13 +9,22 @@ import * as utils from './utils.js';
  * Main code generation function
  */
 export function generateCode(stateData, loadedData) {
-    const { oemData, selectedCtas, ctaConfigs } = stateData;
+    const {
+        oemData,
+        selectedCtas,
+        ctaConfigs,
+        advancedStyles = { srp: {}, vdp: {} }
+    } = stateData;
     const { ctaLabels } = loadedData;
+
+    if (!oemData) {
+        return '';
+    }
 
     let code = '';
 
     // Generate CSS
-    code += generateCss(oemData, selectedCtas, ctaConfigs);
+    code += generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles);
     code += '\n\n';
 
     // Generate HTML for SRP
@@ -37,54 +46,48 @@ export function generateCode(stateData, loadedData) {
 /**
  * Generate CSS styles
  */
-function generateCss(oemData, selectedCtas, ctaConfigs) {
+function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     let css = '<style>\n';
 
     // Base .demo-cta class with common styles
     css += '.demo-cta {\n';
-    css += '    display: block;\n';
+    css += '    display: inline-flex;\n';
+    css += '    justify-content: center;\n';
+    css += '    align-items: center;\n';
     css += '    text-align: center;\n';
     css += '    text-decoration: none;\n';
     css += '    cursor: pointer;\n';
     css += '    border-style: solid;\n';
+    css += '    width: 100%;\n';
     css += '}\n\n';
 
-    // Collect unique style types with their custom styles
     const styleTypeMap = new Map();
 
     selectedCtas.forEach(ctaType => {
         const config = ctaConfigs[ctaType];
-        const styleType = config.styleType;
+        const styleType = utils.sanitizeCssClassName(config.styleType || 'primary');
 
         if (!styleTypeMap.has(styleType)) {
-            const styles = oemData.styles[styleType];
-            const customStyles = config.customStyles || {};
-
-            // Merge base styles with custom overrides
-            const mergedStyles = { ...styles };
-            if (customStyles.borderRadius) mergedStyles.borderRadius = customStyles.borderRadius;
-            if (customStyles.marginTop) mergedStyles.marginTop = customStyles.marginTop;
-            if (customStyles.marginBottom) mergedStyles.marginBottom = customStyles.marginBottom;
-            if (customStyles.padding) mergedStyles.padding = customStyles.padding;
-
-            styleTypeMap.set(styleType, { mergedStyles, hoverStyles: styles });
+            const styles = oemData.styles[config.styleType] || oemData.styles.primary;
+            styleTypeMap.set(styleType, styles);
         }
     });
 
-    // Generate CSS for each unique style type
     styleTypeMap.forEach((styleData, styleType) => {
-        const { mergedStyles, hoverStyles } = styleData;
+        if (!styleData) return;
 
         css += `.demo-cta-${styleType} {\n`;
-        css += `    ${utils.generateCssFromStyles(mergedStyles)};\n`;
+        css += `    ${utils.generateCssFromStyles(styleData)};\n`;
         css += '}\n\n';
 
-        // Hover styles
         css += `.demo-cta-${styleType}:hover {\n`;
-        css += `    background-color: ${hoverStyles.hoverBackgroundColor};\n`;
-        css += `    color: ${hoverStyles.hoverTextColor};\n`;
+        css += `    background-color: ${styleData.hoverBackgroundColor};\n`;
+        css += `    color: ${styleData.hoverTextColor};\n`;
         css += '}\n\n';
     });
+
+    css += buildPlacementOverride('srp', advancedStyles.srp, oemData.styles.primary);
+    css += buildPlacementOverride('vdp', advancedStyles.vdp, oemData.styles.secondary || oemData.styles.primary);
 
     // Special CSS for deeplinked CTAs
     const hasDeeplink = selectedCtas.some(type => ctaConfigs[type].useDeeplink);
@@ -96,6 +99,46 @@ function generateCss(oemData, selectedCtas, ctaConfigs) {
     }
 
     css += '</style>';
+
+    return css;
+}
+
+function buildPlacementOverride(placement, overrides = {}, fallbackStyles = {}) {
+    if (!fallbackStyles) fallbackStyles = {};
+    const selector = placement === 'srp' ? '.cn-srp-only .demo-cta' : '.cn-vdp-only .demo-cta';
+    const defaults = {
+        fontFamily: 'inherit',
+        fontSize: '16px',
+        fontWeight: '600',
+        lineHeight: '1.4',
+        letterSpacing: '0px',
+        borderRadius: fallbackStyles.borderRadius || '4px',
+        marginTop: fallbackStyles.marginTop || '6px',
+        marginBottom: fallbackStyles.marginBottom || '6px',
+        padding: fallbackStyles.padding || '12px',
+        whiteSpace: 'normal'
+    };
+
+    const resolve = (prop) => {
+        if (overrides && overrides[prop]) return overrides[prop];
+        if (fallbackStyles && fallbackStyles[prop]) return fallbackStyles[prop];
+        return defaults[prop];
+    };
+
+    const wrapValue = overrides && overrides.textWrap === 'nowrap' ? 'nowrap' : 'normal';
+
+    let css = `${selector} {\n`;
+    css += `    font-family: ${resolve('fontFamily')};\n`;
+    css += `    font-size: ${resolve('fontSize')};\n`;
+    css += `    font-weight: ${resolve('fontWeight')};\n`;
+    css += `    line-height: ${resolve('lineHeight')};\n`;
+    css += `    letter-spacing: ${resolve('letterSpacing')};\n`;
+    css += `    border-radius: ${resolve('borderRadius')};\n`;
+    css += `    margin-top: ${resolve('marginTop')};\n`;
+    css += `    margin-bottom: ${resolve('marginBottom')};\n`;
+    css += `    padding: ${resolve('padding')};\n`;
+    css += `    white-space: ${wrapValue};\n`;
+    css += '}\n\n';
 
     return css;
 }
@@ -118,7 +161,9 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
             return;
         }
 
-        const label = config.customLabel || config.label;
+        const label = config.useCustomLabel
+            ? (config.customLabel || config.label)
+            : config.label;
 
         // Add mobile/desktop wrappers if specified
         let openWrapper = '';
@@ -152,7 +197,8 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
  */
 function generateCtaAttributes(ctaType, config, ctaLabels) {
     let attrs = '';
-    const baseClass = `demo-cta demo-cta-${config.styleType}`;
+    const styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
+    const baseClass = `demo-cta demo-cta-${styleClass}`;
     let className = baseClass;
 
     // Add special classes for BuyNow

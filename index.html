@@ -113,7 +113,16 @@
                     <p class="step-description">Preview your CTAs and copy the generated code</p>
 
                     <div class="preview-container">
-                        <h3>Live Preview</h3>
+                        <div class="preview-header">
+                            <h3>Live Preview</h3>
+                            <div class="preview-controls">
+                                <label for="preview-placement-select">Placement</label>
+                                <select id="preview-placement-select" class="form-control">
+                                    <option value="srp">SRP</option>
+                                    <option value="vdp">VDP</option>
+                                </select>
+                            </div>
+                        </div>
                         <div id="preview-area" class="preview-area">
                             <!-- Live preview of CTAs -->
                         </div>
@@ -138,7 +147,10 @@
 
             <!-- Live Preview Sidebar -->
             <div class="preview-sidebar" id="preview-sidebar">
-                <h3>Live Preview</h3>
+                <div class="preview-sidebar-header">
+                    <h3>Live Preview</h3>
+                    <button id="preview-theme-toggle" class="btn btn-tertiary" type="button">Dark Mode</button>
+                </div>
                 <div id="live-preview-area" class="live-preview-area">
                     <p class="text-muted">Select CTAs to see preview</p>
                 </div>

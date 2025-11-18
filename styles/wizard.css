@@ -89,19 +89,43 @@ body {
     margin-bottom: 15px;
 }
 
+.preview-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.preview-sidebar.dark {
+    background: var(--gray-800);
+    color: var(--white);
+    border-color: var(--gray-600);
+}
+
+.preview-sidebar.dark h3 {
+    color: var(--white);
+}
+
+.preview-sidebar.dark .live-preview-area {
+    background: rgba(255, 255, 255, 0.05);
+}
+
 .live-preview-area {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: stretch;
+    gap: 12px;
 }
 
 .live-preview-area .demo-cta {
-    display: block;
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
     border-style: solid;
-    margin-bottom: 7px;
 }
 
 /* Tree dropdown styling */
@@ -429,18 +453,50 @@ select[id^="tree-"] option {
     margin-bottom: 30px;
 }
 
-.preview-container h3 {
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.preview-header h3 {
     color: var(--carnow-navy);
     font-size: 1.3rem;
-    margin-bottom: 15px;
+    margin: 0;
+}
+
+.preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.preview-controls label {
+    font-weight: 600;
+    color: var(--gray-800);
 }
 
 .preview-area {
     background: var(--gray-100);
     border: 2px dashed var(--gray-300);
     border-radius: 6px;
-    padding: 30px;
+    padding: 24px;
     min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 420px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.preview-area .demo-cta {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
 }
 
 /* Code Output */
@@ -459,16 +515,18 @@ select[id^="tree-"] option {
     color: var(--carnow-green);
     padding: 20px;
     border-radius: 6px;
-    overflow-x: auto;
+    overflow: auto;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.9rem;
     line-height: 1.5;
     max-height: 600px;
-    overflow-y: auto;
+    max-width: 100%;
 }
 
 .code-output code {
-    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-word;
+    display: block;
 }
 
 /* Buttons */
@@ -504,6 +562,29 @@ select[id^="tree-"] option {
 .btn-secondary:hover:not(:disabled) {
     background: var(--gray-600);
     color: var(--white);
+}
+
+.btn-tertiary {
+    background: transparent;
+    color: var(--carnow-navy);
+    border: 1px solid var(--carnow-navy);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-tertiary:hover:not(:disabled) {
+    background: var(--carnow-navy);
+    color: var(--white);
+}
+
+.preview-sidebar.dark .btn-tertiary {
+    border-color: var(--white);
+    color: var(--white);
+}
+
+.preview-sidebar.dark .btn-tertiary:hover:not(:disabled) {
+    background: var(--white);
+    color: var(--gray-900);
 }
 
 /* Wizard Navigation */

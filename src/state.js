@@ -12,6 +12,7 @@ class AppState {
             oemData: null,          // Full OEM data object
             selectedCtas: [],       // Array of selected CTA types
             ctaConfigs: {},         // Configuration for each CTA
+            advancedStyles: this.createDefaultAdvancedStyles(),
             // Each CTA config structure:
             // {
             //   type: 'confirm_availability',
@@ -23,7 +24,6 @@ class AppState {
             //   dept: null,
             //   customDept: null,
             //   styleType: 'primary',  // 'primary' or 'outline'
-            //   customStyles: {},      // Custom style overrides
             //   placement: {
             //     srp: true,
             //     vdp: true,
@@ -35,6 +35,26 @@ class AppState {
             oems: [],
             ctaLabels: null,
             trees: null
+        };
+    }
+
+    createDefaultAdvancedStyles() {
+        const createEmpty = () => ({
+            fontFamily: null,
+            fontSize: null,
+            fontWeight: null,
+            lineHeight: null,
+            letterSpacing: null,
+            borderRadius: null,
+            marginTop: null,
+            marginBottom: null,
+            padding: null,
+            textWrap: 'wrap'
+        });
+
+        return {
+            srp: createEmpty(),
+            vdp: createEmpty()
         };
     }
 
@@ -77,6 +97,7 @@ class AppState {
     setOem(oemCode, oemData) {
         this.data.oem = oemCode;
         this.data.oemData = oemData;
+        this.data.advancedStyles = this.createDefaultAdvancedStyles();
     }
 
     /**
@@ -122,15 +143,15 @@ class AppState {
             type: ctaType,
             label: ctaInfo.default,
             customLabel: null,
+            useCustomLabel: false,
             useDeeplink: false,
             deeplinkStep: null,
             tree: null,
+            useCustomTree: false,
+            customTree: null,
             dept: defaultDept,
             customDept: defaultCustomDept,
             styleType: 'primary',
-            customStyles: {
-                marginBottom: '7px'
-            },
             placement: {
                 srp: true,
                 vdp: true,
@@ -148,6 +169,15 @@ class AppState {
         if (this.data.ctaConfigs[ctaType]) {
             this.data.ctaConfigs[ctaType] = {
                 ...this.data.ctaConfigs[ctaType],
+                ...updates
+            };
+        }
+    }
+
+    updateAdvancedStyles(placement, updates) {
+        if (this.data.advancedStyles[placement]) {
+            this.data.advancedStyles[placement] = {
+                ...this.data.advancedStyles[placement],
                 ...updates
             };
         }
@@ -291,7 +321,14 @@ class AppState {
 
                     if (ctaInfo.requiresTree && !config.useDeeplink) {
                         // Must have tree selected
-                        if (!config.tree) {
+                        if (config.useCustomTree) {
+                            if (!config.customTree || !config.customTree.trim()) {
+                                errors.push({
+                                    field: `custom-tree-${ctaType}`,
+                                    message: `Enter a custom tree for ${ctaInfo.default}`
+                                });
+                            }
+                        } else if (!config.tree) {
                             errors.push({
                                 field: `tree-${ctaType}`,
                                 message: `Select a tree for ${ctaInfo.default}`
@@ -365,7 +402,8 @@ class AppState {
             oem: null,
             oemData: null,
             selectedCtas: [],
-            ctaConfigs: {}
+            ctaConfigs: {},
+            advancedStyles: this.createDefaultAdvancedStyles()
         };
     }
 
@@ -383,6 +421,9 @@ class AppState {
         try {
             const importedData = JSON.parse(jsonString);
             this.data = importedData;
+             if (!this.data.advancedStyles) {
+                 this.data.advancedStyles = this.createDefaultAdvancedStyles();
+             }
             return true;
         } catch (error) {
             console.error('Error importing state:', error);

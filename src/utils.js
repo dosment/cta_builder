@@ -157,13 +157,6 @@ export function generateCssFromStyles(styles) {
 }
 
 /**
- * Merge styles with custom overrides
- */
-export function mergeStyles(baseStyles, customStyles) {
-    return { ...baseStyles, ...customStyles };
-}
-
-/**
  * Escape HTML special characters
  */
 export function escapeHtml(text) {

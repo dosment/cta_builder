@@ -9,6 +9,8 @@ import { generateCode } from './generator.js';
 
 class Wizard {
     constructor() {
+        this.previewThemeToggleBtn = null;
+        this.currentPreviewPlacement = 'srp';
         this.init();
     }
 
@@ -31,6 +33,12 @@ class Wizard {
         // Navigation buttons - only set up prev button here
         // Next button is handled dynamically in updateNavigationButtons
         document.getElementById('prev-btn').addEventListener('click', () => this.handlePrev());
+
+        this.previewThemeToggleBtn = document.getElementById('preview-theme-toggle');
+        if (this.previewThemeToggleBtn) {
+            this.previewThemeToggleBtn.addEventListener('click', () => this.togglePreviewTheme());
+            this.updatePreviewThemeButton(false);
+        }
     }
 
     handleNext() {
@@ -110,6 +118,20 @@ class Wizard {
 
         // Update live preview
         this.updateLivePreview();
+    }
+
+    togglePreviewTheme() {
+        const sidebar = document.getElementById('preview-sidebar');
+        if (!sidebar) return;
+
+        const isDark = sidebar.classList.toggle('dark');
+        this.updatePreviewThemeButton(isDark);
+    }
+
+    updatePreviewThemeButton(isDark) {
+        if (!this.previewThemeToggleBtn) return;
+        this.previewThemeToggleBtn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        this.previewThemeToggleBtn.setAttribute('aria-pressed', isDark.toString());
     }
 
     /**
@@ -390,23 +412,77 @@ class Wizard {
         treeSelect.appendChild(defaultOption);
 
         const trees = appState.getTreesForCategory(ctaInfo.treeCategory);
+        const isCustomTree = config.useCustomTree || (config.tree && !trees.some(tree => tree.id === config.tree));
+
         trees.forEach(tree => {
             const option = utils.createElement('option', {
                 value: tree.id,
-                selected: config.tree === tree.id
+                selected: !isCustomTree && config.tree === tree.id
             }, tree.id);
             treeSelect.appendChild(option);
         });
 
+        const customTreeOption = utils.createElement('option', {
+            value: '__custom__',
+            selected: isCustomTree
+        }, 'Custom Tree');
+        treeSelect.appendChild(customTreeOption);
+
         treeSelect.onchange = (e) => {
-            appState.updateCtaConfig(ctaType, { tree: e.target.value });
-            // Clear validation error
-            utils.clearFieldError(`tree-${ctaType}`);
+            const value = e.target.value;
+            if (value === '__custom__') {
+                appState.updateCtaConfig(ctaType, {
+                    useCustomTree: true,
+                    customTree: config.customTree || '',
+                    tree: config.customTree || ''
+                });
+                this.renderTreeConfiguration();
+                this.setupValidationWatching();
+            } else {
+                appState.updateCtaConfig(ctaType, {
+                    useCustomTree: false,
+                    customTree: null,
+                    tree: value
+                });
+                // Clear validation error
+                utils.clearFieldError(`tree-${ctaType}`);
+            }
         };
 
         treeField.appendChild(treeLabel);
         treeField.appendChild(treeSelect);
         row.appendChild(treeField);
+
+        if (isCustomTree) {
+            const customTreeField = utils.createElement('div', { className: 'config-field' });
+            const customTreeLabel = utils.createElement('label', {}, 'Custom Tree ID: ');
+            const customTreeRequired = utils.createElement('span', {
+                className: 'text-danger',
+                style: 'font-weight: bold;'
+            }, '*');
+            customTreeLabel.appendChild(customTreeRequired);
+
+            const customTreeInput = utils.createElement('input', {
+                type: 'text',
+                id: `custom-tree-${ctaType}`,
+                value: config.customTree || config.tree || '',
+                placeholder: 'Enter custom tree ID',
+                required: true
+            });
+
+            customTreeInput.oninput = (e) => {
+                const value = e.target.value;
+                appState.updateCtaConfig(ctaType, {
+                    customTree: value,
+                    tree: value
+                });
+                utils.clearFieldError(`custom-tree-${ctaType}`);
+            };
+
+            customTreeField.appendChild(customTreeLabel);
+            customTreeField.appendChild(customTreeInput);
+            row.appendChild(customTreeField);
+        }
 
         // Department configuration - Confirm Availability is special (custom only)
         if (ctaType === 'confirm_availability') {
@@ -575,28 +651,36 @@ class Wizard {
         const labelLabel = utils.createElement('label', {}, 'Button Label:');
         const labelSelect = utils.createElement('select', { id: `label-${ctaType}` });
 
+        const useCustomLabel = config.useCustomLabel;
+
         ctaInfo.options.forEach(option => {
             const optElement = utils.createElement('option', {
                 value: option,
-                selected: (config.customLabel || config.label) === option
+                selected: !useCustomLabel && (config.label === option)
             }, option);
             labelSelect.appendChild(optElement);
         });
 
         // Custom option
-        const isCustom = config.customLabel && !ctaInfo.options.includes(config.customLabel);
         const customOption = utils.createElement('option', {
             value: '__custom__',
-            selected: isCustom
+            selected: useCustomLabel
         }, 'Custom');
         labelSelect.appendChild(customOption);
 
         labelSelect.onchange = (e) => {
             if (e.target.value === '__custom__') {
-                appState.updateCtaConfig(ctaType, { customLabel: config.label });
+                appState.updateCtaConfig(ctaType, {
+                    useCustomLabel: true,
+                    customLabel: config.customLabel || ''
+                });
                 this.renderStylingConfiguration();
             } else {
-                appState.updateCtaConfig(ctaType, { customLabel: null, label: e.target.value });
+                appState.updateCtaConfig(ctaType, {
+                    useCustomLabel: false,
+                    customLabel: '',
+                    label: e.target.value
+                });
                 this.updateLivePreview(); // Update preview when label changes
             }
         };
@@ -606,7 +690,7 @@ class Wizard {
         row.appendChild(labelField);
 
         // Only show custom text input if "Custom" is selected
-        if (labelSelect.value === '__custom__') {
+        if (useCustomLabel) {
             const customLabelField = utils.createElement('div', { className: 'config-field' });
             const customLabelLabel = utils.createElement('label', {}, 'Custom Label Text:');
             const customLabelInput = utils.createElement('input', {
@@ -624,6 +708,19 @@ class Wizard {
             customLabelField.appendChild(customLabelLabel);
             customLabelField.appendChild(customLabelInput);
             row.appendChild(customLabelField);
+        } else {
+            const helperField = utils.createElement('div', { className: 'config-field' });
+            const helperLabel = utils.createElement('label', {}, 'Custom Label Text:');
+            const helperInput = utils.createElement('input', {
+                type: 'text',
+                id: `custom-label-${ctaType}`,
+                value: '',
+                placeholder: 'Select "Custom" to edit',
+                disabled: true
+            });
+            helperField.appendChild(helperLabel);
+            helperField.appendChild(helperInput);
+            row.appendChild(helperField);
         }
 
         return row;
@@ -665,106 +762,307 @@ class Wizard {
         const container = document.getElementById('advanced-styling-config-list');
         utils.clearElement(container);
 
-        const ctaLabels = appState.loadedData.ctaLabels;
+        const placements = [
+            { key: 'srp', label: 'SRP Buttons' },
+            { key: 'vdp', label: 'VDP Buttons' }
+        ];
 
-        appState.data.selectedCtas.forEach(ctaType => {
-            const config = appState.getCtaConfig(ctaType);
-            const ctaInfo = ctaLabels[ctaType];
-            const oemStyles = appState.data.oemData.styles[config.styleType];
-
+        placements.forEach(({ key, label }) => {
             const configItem = utils.createElement('div', { className: 'config-item' });
-            const heading = utils.createElement('h3', {}, ctaInfo.default);
+            const heading = utils.createElement('h3', {}, label);
             configItem.appendChild(heading);
 
-            // Border Radius Slider
-            const borderRadiusRow = this.createSlider(
-                ctaType,
-                'borderRadius',
-                'Border Radius (px)',
-                0,
-                50,
-                parseInt(config.customStyles.borderRadius) || parseInt(oemStyles.borderRadius) || 4
-            );
-            configItem.appendChild(borderRadiusRow);
-
-            // Margin Top Slider
-            const marginTopRow = this.createSlider(
-                ctaType,
-                'marginTop',
-                'Margin Top (px)',
-                0,
-                50,
-                parseInt(config.customStyles.marginTop) || parseInt(oemStyles.marginTop) || 6
-            );
-            configItem.appendChild(marginTopRow);
-
-            // Margin Bottom Slider
-            const marginBottomRow = this.createSlider(
-                ctaType,
-                'marginBottom',
-                'Margin Bottom (px)',
-                0,
-                50,
-                parseInt(config.customStyles.marginBottom) || 7
-            );
-            configItem.appendChild(marginBottomRow);
-
-            // Padding Slider
-            const paddingRow = this.createSlider(
-                ctaType,
-                'padding',
-                'Padding (px)',
-                0,
-                50,
-                parseInt(config.customStyles.padding) || parseInt(oemStyles.padding) || 11
-            );
-            configItem.appendChild(paddingRow);
+            configItem.appendChild(this.createTypographyControls(key));
+            configItem.appendChild(this.createSpacingControls(key));
 
             container.appendChild(configItem);
         });
     }
 
-    createSlider(ctaType, property, label, min, max, defaultValue) {
-        const row = utils.createElement('div', { className: 'config-row' });
+    createTypographyControls(placement) {
+        const wrapper = utils.createElement('div', { className: 'config-row' });
 
-        const sliderField = utils.createElement('div', { className: 'config-field' });
-        const sliderLabel = utils.createElement('label', {}, `${label}:`);
+        // Font family
+        const fontFamilies = [
+            { value: '', label: 'Use OEM Font' },
+            { value: 'Arial, sans-serif', label: 'Arial' },
+            { value: '\'Roboto\', sans-serif', label: 'Roboto' },
+            { value: '\'Montserrat\', sans-serif', label: 'Montserrat' },
+            { value: '\'Georgia\', serif', label: 'Georgia' }
+        ];
+        const fontFamilyField = this.createPlacementSelect(
+            placement,
+            'fontFamily',
+            'Font Family',
+            fontFamilies
+        );
+        wrapper.appendChild(fontFamilyField);
+
+        // Font size slider
+        const fontSizeField = this.createPlacementSlider(
+            placement,
+            'fontSize',
+            'Font Size (px)',
+            12,
+            28,
+            1,
+            'px'
+        );
+        wrapper.appendChild(fontSizeField);
+
+        // Font weight
+        const fontWeights = [
+            { value: '', label: 'Use OEM Weight' },
+            { value: '400', label: 'Regular (400)' },
+            { value: '500', label: 'Medium (500)' },
+            { value: '600', label: 'Semi-bold (600)' },
+            { value: '700', label: 'Bold (700)' }
+        ];
+        const fontWeightField = this.createPlacementSelect(
+            placement,
+            'fontWeight',
+            'Font Weight',
+            fontWeights
+        );
+        wrapper.appendChild(fontWeightField);
+
+        // Line height slider
+        const lineHeightField = this.createPlacementSlider(
+            placement,
+            'lineHeight',
+            'Line Height',
+            1,
+            3,
+            0.1,
+            ''
+        );
+        wrapper.appendChild(lineHeightField);
+
+        // Letter spacing slider
+        const letterSpacingField = this.createPlacementSlider(
+            placement,
+            'letterSpacing',
+            'Letter Spacing (px)',
+            -2,
+            6,
+            0.1,
+            'px'
+        );
+        wrapper.appendChild(letterSpacingField);
+
+        // Wrap select
+        const wrapField = this.createPlacementSelect(
+            placement,
+            'textWrap',
+            'Text Wrapping',
+            [
+                { value: 'wrap', label: 'Wrap text' },
+                { value: 'nowrap', label: 'No wrap' }
+            ]
+        );
+        wrapper.appendChild(wrapField);
+
+        return wrapper;
+    }
+
+    createSpacingControls(placement) {
+        const wrapper = utils.createElement('div', { className: 'config-row' });
+
+        const borderRadiusField = this.createPlacementSlider(
+            placement,
+            'borderRadius',
+            'Border Radius (px)',
+            0,
+            50,
+            1,
+            'px'
+        );
+        wrapper.appendChild(borderRadiusField);
+
+        const marginTopField = this.createPlacementSlider(
+            placement,
+            'marginTop',
+            'Margin Top (px)',
+            0,
+            40,
+            1,
+            'px'
+        );
+        wrapper.appendChild(marginTopField);
+
+        const marginBottomField = this.createPlacementSlider(
+            placement,
+            'marginBottom',
+            'Margin Bottom (px)',
+            0,
+            40,
+            1,
+            'px'
+        );
+        wrapper.appendChild(marginBottomField);
+
+        const paddingField = this.createPlacementSlider(
+            placement,
+            'padding',
+            'Padding (px)',
+            4,
+            40,
+            1,
+            'px'
+        );
+        wrapper.appendChild(paddingField);
+
+        return wrapper;
+    }
+
+    createPlacementSelect(placement, property, label, options) {
+        const field = utils.createElement('div', { className: 'config-field' });
+        const labelEl = utils.createElement('label', {}, `${label}:`);
+        const select = utils.createElement('select', {
+            id: `${property}-${placement}`
+        });
+
+        const advancedValue = this.getAdvancedStylesValue(placement, property);
+        const currentValue = advancedValue ?? (property === 'textWrap' ? 'wrap' : '');
+
+        options.forEach(opt => {
+            const optionEl = utils.createElement('option', {
+                value: opt.value,
+                selected: currentValue === opt.value
+            }, opt.label);
+            select.appendChild(optionEl);
+        });
+
+        select.onchange = (e) => {
+            const value = e.target.value;
+            appState.updateAdvancedStyles(placement, {
+                [property]: value === '' ? null : value
+            });
+            this.refreshPreviewOutputs();
+        };
+
+        field.appendChild(labelEl);
+        field.appendChild(select);
+        return field;
+    }
+
+    createPlacementSlider(placement, property, label, min, max, step, unit = 'px') {
+        const field = utils.createElement('div', { className: 'config-field' });
+        const labelEl = utils.createElement('label', {}, `${label}:`);
 
         const sliderContainer = utils.createElement('div', { className: 'slider-container' });
 
+        const resolvedValue = this.getResolvedPlacementStyleValue(placement, property);
+        const numericValue = this.parseNumericValue(resolvedValue, min);
+
         const slider = utils.createElement('input', {
             type: 'range',
-            id: `${property}-${ctaType}`,
-            min: min,
-            max: max,
-            value: defaultValue
+            id: `${property}-${placement}`,
+            min,
+            max,
+            step,
+            value: numericValue
         });
 
         const valueDisplay = utils.createElement('span', {
             className: 'slider-value',
-            id: `${property}-value-${ctaType}`
-        }, `${defaultValue}px`);
+            id: `${property}-value-${placement}`
+        }, unit ? `${numericValue}${unit}` : `${numericValue}`);
 
         slider.oninput = (e) => {
-            const value = e.target.value;
-            valueDisplay.textContent = `${value}px`;
-
-            // Update state with the new value
-            const customStyles = { ...appState.getCtaConfig(ctaType).customStyles };
-            customStyles[property] = `${value}px`;
-            appState.updateCtaConfig(ctaType, { customStyles });
-
-            // Update live preview
-            this.updateLivePreview();
+            const rawValue = e.target.value;
+            valueDisplay.textContent = unit ? `${rawValue}${unit}` : rawValue;
+            const storedValue = unit ? `${rawValue}${unit}` : rawValue;
+            appState.updateAdvancedStyles(placement, { [property]: storedValue });
+            this.refreshPreviewOutputs();
         };
 
         sliderContainer.appendChild(slider);
         sliderContainer.appendChild(valueDisplay);
-        sliderField.appendChild(sliderLabel);
-        sliderField.appendChild(sliderContainer);
-        row.appendChild(sliderField);
+        field.appendChild(labelEl);
+        field.appendChild(sliderContainer);
 
-        return row;
+        return field;
+    }
+
+    getAdvancedStylesValue(placement, property) {
+        const adv = appState.data.advancedStyles?.[placement];
+        if (!adv) return null;
+        return adv[property];
+    }
+
+    getResolvedPlacementStyleValue(placement, property) {
+        const advancedValue = this.getAdvancedStylesValue(placement, property);
+        if (advancedValue) {
+            return advancedValue;
+        }
+
+        if (property === 'textWrap') {
+            return 'wrap';
+        }
+
+        const baseStyle = this.getPlacementBaseStyle(placement);
+        if (baseStyle && baseStyle[property]) {
+            return baseStyle[property];
+        }
+
+        return this.getFallbackValue(property);
+    }
+
+    getPlacementBaseStyle(placement) {
+        const oemData = appState.data.oemData;
+        if (!oemData || !oemData.styles) {
+            return {};
+        }
+
+        if (placement === 'srp') {
+            return oemData.styles.primary || {};
+        }
+
+        if (placement === 'vdp') {
+            return oemData.styles.secondary || oemData.styles.primary || {};
+        }
+
+        return {};
+    }
+
+    getFallbackValue(property) {
+        const defaults = {
+            fontFamily: 'inherit',
+            fontSize: '16px',
+            fontWeight: '600',
+            lineHeight: '1.4',
+            letterSpacing: '0px',
+            borderRadius: '4px',
+            marginTop: '6px',
+            marginBottom: '6px',
+            padding: '12px',
+            textWrap: 'wrap'
+        };
+
+        return defaults[property] || '';
+    }
+
+    parseNumericValue(value, fallback) {
+        if (typeof value === 'number') {
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            const match = value.match(/-?\d+(\.\d+)?/);
+            if (match) {
+                return parseFloat(match[0]);
+            }
+        }
+
+        return fallback;
+    }
+
+    refreshPreviewOutputs() {
+        this.updateLivePreview();
+        if (appState.currentStep === 7) {
+            this.renderPreview();
+        }
     }
 
     // Step 6: Placement Configuration
@@ -901,10 +1199,23 @@ class Wizard {
     renderPreview() {
         const previewArea = document.getElementById('preview-area');
         const codeOutput = document.getElementById('generated-code');
+        const placementSelect = document.getElementById('preview-placement-select');
+
+        if (placementSelect) {
+            placementSelect.value = this.currentPreviewPlacement;
+            placementSelect.onchange = (e) => {
+                this.currentPreviewPlacement = e.target.value;
+                this.renderPreview();
+                this.updateLivePreview();
+            };
+        }
 
         // Generate preview
         utils.clearElement(previewArea);
-        this.renderPreviewCtas(previewArea);
+        const renderedCount = this.renderPreviewCtas(previewArea, this.currentPreviewPlacement);
+        if (renderedCount === 0) {
+            previewArea.innerHTML = `<p class="text-muted">No CTAs configured for ${this.currentPreviewPlacement.toUpperCase()} placement.</p>`;
+        }
 
         // Generate code
         const generatedCode = generateCode(appState.data, appState.loadedData);
@@ -922,51 +1233,118 @@ class Wizard {
         };
     }
 
-    renderPreviewCtas(container) {
+    renderPreviewCtas(container, mode = 'srp') {
         const oemData = appState.data.oemData;
+        if (!oemData) return 0;
+
+        let rendered = 0;
 
         appState.data.selectedCtas.forEach(ctaType => {
             const config = appState.getCtaConfig(ctaType);
-            const styles = oemData.styles[config.styleType];
-            const customStyles = config.customStyles || {};
+            if (!config) return;
 
+            const placement = this.resolvePlacementForPreview(config, mode);
+            if (!placement) return;
+
+            const styles = oemData.styles[config.styleType] || oemData.styles.primary;
+            const appliedStyles = this.getPreviewStyles(styles, placement);
+            const buttonLabel = config.useCustomLabel
+                ? (config.customLabel || config.label)
+                : config.label;
+
+            const styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
             const button = utils.createElement('a', {
-                className: 'demo-cta',
+                className: `demo-cta demo-cta-${styleClass}`,
                 href: '#',
                 style: `
-                    display: inline-block;
-                    width: auto;
-                    max-width: 100%;
+                    display: inline-flex;
+                    width: 100%;
+                    justify-content: center;
+                    align-items: center;
                     text-align: center;
-                    background-color: ${styles.backgroundColor};
-                    color: ${styles.textColor};
-                    border: ${styles.borderWidth} solid ${styles.borderColor};
-                    border-radius: ${customStyles.borderRadius || styles.borderRadius};
-                    text-transform: ${styles.textTransform};
-                    font-size: ${styles.fontSize};
-                    font-weight: ${styles.fontWeight};
-                    padding: ${customStyles.padding || styles.padding};
-                    margin-top: ${customStyles.marginTop || styles.marginTop};
-                    margin-bottom: ${customStyles.marginBottom || styles.marginBottom};
-                    letter-spacing: ${styles.letterSpacing};
-                    transition: ${styles.transition};
+                    background-color: ${appliedStyles.backgroundColor};
+                    color: ${appliedStyles.textColor};
+                    border: ${appliedStyles.borderWidth} solid ${appliedStyles.borderColor};
+                    border-radius: ${appliedStyles.borderRadius};
+                    text-transform: ${appliedStyles.textTransform};
+                    font-size: ${appliedStyles.fontSize};
+                    font-weight: ${appliedStyles.fontWeight};
+                    line-height: ${appliedStyles.lineHeight};
+                    letter-spacing: ${appliedStyles.letterSpacing};
+                    padding: ${appliedStyles.padding};
+                    margin-top: ${appliedStyles.marginTop};
+                    margin-bottom: ${appliedStyles.marginBottom};
+                    font-family: ${appliedStyles.fontFamily};
+                    white-space: ${appliedStyles.whiteSpace};
+                    transition: ${appliedStyles.transition};
                     text-decoration: none;
                     cursor: pointer;
                 `
-            }, config.customLabel || config.label);
+            }, buttonLabel);
 
-            // Hover effects
+            const baseStyles = styles;
+
             button.onmouseenter = () => {
-                button.style.backgroundColor = styles.hoverBackgroundColor;
-                button.style.color = styles.hoverTextColor;
+                button.style.backgroundColor = baseStyles.hoverBackgroundColor;
+                button.style.color = baseStyles.hoverTextColor;
             };
             button.onmouseleave = () => {
-                button.style.backgroundColor = styles.backgroundColor;
-                button.style.color = styles.textColor;
+                button.style.backgroundColor = appliedStyles.backgroundColor;
+                button.style.color = appliedStyles.textColor;
             };
 
             container.appendChild(button);
+            rendered++;
         });
+
+        return rendered;
+    }
+
+    resolvePlacementForPreview(config, mode) {
+        if (mode === 'srp') {
+            return config.placement.srp ? 'srp' : null;
+        }
+        if (mode === 'vdp') {
+            return config.placement.vdp ? 'vdp' : null;
+        }
+
+        // live preview mode - prioritize SRP, fallback to VDP
+        if (config.placement.srp) return 'srp';
+        if (config.placement.vdp) return 'vdp';
+        return null;
+    }
+
+    getPreviewStyles(baseStyles, placement) {
+        const advanced = appState.data.advancedStyles?.[placement] || {};
+
+        const resolve = (prop, fallbackKey) => {
+            if (advanced[prop]) {
+                return advanced[prop];
+            }
+            if (baseStyles && baseStyles[prop]) {
+                return baseStyles[prop];
+            }
+            return this.getFallbackValue(fallbackKey || prop);
+        };
+
+        return {
+            backgroundColor: baseStyles.backgroundColor,
+            textColor: baseStyles.textColor,
+            borderColor: baseStyles.borderColor,
+            borderWidth: baseStyles.borderWidth,
+            borderRadius: resolve('borderRadius'),
+            textTransform: baseStyles.textTransform,
+            fontSize: resolve('fontSize'),
+            fontWeight: resolve('fontWeight'),
+            fontFamily: resolve('fontFamily'),
+            lineHeight: resolve('lineHeight'),
+            letterSpacing: resolve('letterSpacing'),
+            padding: resolve('padding'),
+            marginTop: resolve('marginTop'),
+            marginBottom: resolve('marginBottom'),
+            whiteSpace: advanced.textWrap === 'nowrap' ? 'nowrap' : 'normal',
+            transition: baseStyles.transition
+        };
     }
 
     // Update Live Preview Sidebar
@@ -984,25 +1362,32 @@ class Wizard {
             utils.clearElement(livePreviewArea);
             const oemData = appState.data.oemData;
             const styles = oemData.styles.primary;
+            const appliedStyles = this.getPreviewStyles(styles, this.currentPreviewPlacement || 'srp');
 
             const sampleButton = utils.createElement('a', {
-                className: 'demo-cta',
+                className: 'demo-cta demo-cta-primary',
                 href: '#',
                 style: `
-                    display: block;
+                    display: inline-flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
                     text-align: center;
-                    background-color: ${styles.backgroundColor};
-                    color: ${styles.textColor};
-                    border: ${styles.borderWidth} solid ${styles.borderColor};
-                    border-radius: ${styles.borderRadius};
-                    text-transform: ${styles.textTransform};
-                    font-size: ${styles.fontSize};
-                    font-weight: ${styles.fontWeight};
-                    padding: ${styles.padding};
-                    margin-top: ${styles.marginTop};
-                    margin-bottom: ${styles.marginBottom};
-                    letter-spacing: ${styles.letterSpacing};
-                    transition: ${styles.transition};
+                    background-color: ${appliedStyles.backgroundColor};
+                    color: ${appliedStyles.textColor};
+                    border: ${appliedStyles.borderWidth} solid ${appliedStyles.borderColor};
+                    border-radius: ${appliedStyles.borderRadius};
+                    text-transform: ${appliedStyles.textTransform};
+                    font-size: ${appliedStyles.fontSize};
+                    font-weight: ${appliedStyles.fontWeight};
+                    line-height: ${appliedStyles.lineHeight};
+                    letter-spacing: ${appliedStyles.letterSpacing};
+                    padding: ${appliedStyles.padding};
+                    margin-top: ${appliedStyles.marginTop};
+                    margin-bottom: ${appliedStyles.marginBottom};
+                    font-family: ${appliedStyles.fontFamily};
+                    white-space: ${appliedStyles.whiteSpace};
+                    transition: ${appliedStyles.transition};
                     text-decoration: none;
                     cursor: pointer;
                 `
@@ -1014,8 +1399,8 @@ class Wizard {
                 sampleButton.style.color = styles.hoverTextColor;
             };
             sampleButton.onmouseleave = () => {
-                sampleButton.style.backgroundColor = styles.backgroundColor;
-                sampleButton.style.color = styles.textColor;
+                sampleButton.style.backgroundColor = appliedStyles.backgroundColor;
+                sampleButton.style.color = appliedStyles.textColor;
             };
 
             livePreviewArea.appendChild(sampleButton);
@@ -1024,7 +1409,10 @@ class Wizard {
 
         // Clear and render preview CTAs
         utils.clearElement(livePreviewArea);
-        this.renderPreviewCtas(livePreviewArea);
+        const rendered = this.renderPreviewCtas(livePreviewArea, 'live');
+        if (rendered === 0) {
+            livePreviewArea.innerHTML = '<p class="text-muted">Enable SRP or VDP placement to see CTAs here.</p>';
+        }
     }
 }
 
