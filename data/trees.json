@@ -4,13 +4,13 @@
       "category": "confirm_availability",
       "label": "Check Availability",
       "options": [
+        { "id": "2000_V2_LHN_CONFIRM", "label": "2000 V2 LHN Confirm (LHN-enabled)" },
+        { "id": "AMSI_CHECK_AVAILABILITY_DR", "label": "AMSI Check Availability DR" },
+        { "id": "AUTONISSAN_CHECK_DR_FINAL_3", "label": "AutoNissan Check DR Final 3" },
         { "id": "CHECK_AVAILABILITY_2022UPDATED", "label": "Check Availability 2022 Updated" },
         { "id": "CN_CONFIRM_AVAILABILITY", "label": "CN Confirm Availability" },
-        { "id": "AUTONISSAN_CHECK_DR_FINAL_3", "label": "AutoNissan Check DR Final 3" },
-        { "id": "YARK_AVAILABILITY_NO_DR", "label": "Yark Availability (No DR)" },
-        { "id": "AMSI_CHECK_AVAILABILITY_DR", "label": "AMSI Check Availability DR" },
-        { "id": "2000_V2_LHN_CONFIRM", "label": "2000 V2 LHN Confirm (LHN-enabled)" },
-        { "id": "CONVERT_CONFIRM_AVAILABILITY", "label": "Convert - Confirm Availability" }
+        { "id": "CONVERT_CONFIRM_AVAILABILITY", "label": "Convert - Confirm Availability" },
+        { "id": "YARK_AVAILABILITY_NO_DR", "label": "Yark Availability (No DR)" }
       ]
     },
     {
@@ -18,11 +18,11 @@
       "label": "Schedule Test Drive",
       "options": [
         { "id": "1000_V2_TEST_DRIVE", "label": "1000 V2 Test Drive" },
-        { "id": "3000_V2_TEST_DRIVE_DR", "label": "3000 V2 Test Drive DR" },
+        { "id": "2000_V2_DN_TEST_DRIVE", "label": "2000 V2 DN Test Drive (LHN/DealNow)" },
         { "id": "3000_V2_TEST_DRIVE", "label": "3000 V2 Test Drive" },
-        { "id": "CONVERT_TEST_DRIVE", "label": "Convert - Test Drive" },
+        { "id": "3000_V2_TEST_DRIVE_DR", "label": "3000 V2 Test Drive DR" },
         { "id": "AMSI_3000_V2_TEST_DRIVE_DR", "label": "AMSI 3000 V2 Test Drive DR" },
-        { "id": "2000_V2_DN_TEST_DRIVE", "label": "2000 V2 DN Test Drive (LHN/DealNow)" }
+        { "id": "CONVERT_TEST_DRIVE", "label": "Convert - Test Drive" }
       ]
     },
     {
@@ -30,12 +30,12 @@
       "label": "E-Price / Get E-Price",
       "options": [
         { "id": "1000_V2_EPRICE", "label": "1000 V2 E-Price" },
+        { "id": "2000_V2_DN_EPRICE", "label": "2000 V2 DN E-Price (LHN/DealNow)" },
         { "id": "3000_V2_EPRICE_DR", "label": "3000 V2 E-Price DR" },
+        { "id": "3000_V2_EPRICE_DR_MCD", "label": "3000 V2 E-Price DR MCD" },
         { "id": "CONVERT_E_PRICE", "label": "Convert - E-Price" },
         { "id": "E_PRICE_SF_HD", "label": "E-Price SF HD" },
-        { "id": "3000_V2_EPRICE_DR_MCD", "label": "3000 V2 E-Price DR MCD" },
-        { "id": "LOWE_EPRICE_DR", "label": "Lowe E-Price DR" },
-        { "id": "2000_V2_DN_EPRICE", "label": "2000 V2 DN E-Price (LHN/DealNow)" }
+        { "id": "LOWE_EPRICE_DR", "label": "Lowe E-Price DR" }
       ]
     },
     {
@@ -44,8 +44,8 @@
       "options": [
         { "id": "1000_V2_CREDIT", "label": "1000 V2 Credit" },
         { "id": "3000_V2_CREDIT_DR", "label": "3000 V2 Credit DR" },
-        { "id": "CONVERT_PREQUALIFY", "label": "Convert - Pre-Qualify" },
         { "id": "AMSI_3000_V2_CREDIT_DR", "label": "AMSI 3000 V2 Credit DR" },
+        { "id": "CONVERT_PREQUALIFY", "label": "Convert - Pre-Qualify" },
         { "id": "PREQUAL_SCHEDULE", "label": "Pre-Qual Schedule" }
       ]
     },
@@ -54,13 +54,13 @@
       "label": "Value Trade / Sell Us Your Car",
       "options": [
         { "id": "1000_V2_TRADE_TRIM", "label": "1000 V2 Trade Trim" },
+        { "id": "2000_V2_DN_TRADE_TRIM", "label": "2000 V2 DN Trade Trim (LHN/DealNow)" },
         { "id": "3000_V2_TRADE_TRIM_DR", "label": "3000 V2 Trade Trim DR" },
-        { "id": "VINCUE_TRADE_DR", "label": "Vincue Trade DR" },
-        { "id": "TRADE_VISIT", "label": "Trade Visit" },
         { "id": "CONVERT_VALUE_TRADE", "label": "Convert - Value Trade" },
         { "id": "DN_TRADE_TREE", "label": "DN Trade Tree" },
         { "id": "Trade_APP", "label": "Trade App" },
-        { "id": "2000_V2_DN_TRADE_TRIM", "label": "2000 V2 DN Trade Trim (LHN/DealNow)" }
+        { "id": "TRADE_VISIT", "label": "Trade Visit" },
+        { "id": "VINCUE_TRADE_DR", "label": "Vincue Trade DR" }
       ]
     }
   ],

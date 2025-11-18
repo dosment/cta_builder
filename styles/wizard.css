@@ -389,6 +389,18 @@ select[id^="tree-"] option {
     color: var(--gray-800);
 }
 
+.checkbox-field label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.inline-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
 .config-field select,
 .config-field input {
     padding: 8px 12px;
@@ -401,51 +413,6 @@ select[id^="tree-"] option {
 .config-field input:focus {
     outline: none;
     border-color: var(--carnow-blue);
-}
-
-/* Toggle Switch */
-.toggle-switch {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.toggle-switch input[type="checkbox"] {
-    position: relative;
-    width: 50px;
-    height: 26px;
-    appearance: none;
-    background: var(--gray-300);
-    border-radius: 13px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.toggle-switch input[type="checkbox"]::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--white);
-    top: 3px;
-    left: 3px;
-    transition: transform 0.3s ease;
-}
-
-.toggle-switch input[type="checkbox"]:checked {
-    background: var(--carnow-blue);
-}
-
-.toggle-switch input[type="checkbox"]:checked::before {
-    transform: translateX(24px);
-}
-
-.toggle-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gray-700);
-    min-width: 65px;
 }
 
 /* Preview Area */
@@ -543,6 +510,16 @@ select[id^="tree-"] option {
 .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.btn.btn-inactive,
+.btn-primary:disabled {
+    background: var(--gray-300);
+    color: var(--gray-600);
+    border: 1px solid var(--gray-400);
+    opacity: 1;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 .btn-primary {
