@@ -6,8 +6,9 @@
 import * as utils from '../../utils.js';
 
 export class PlacementStep {
-    constructor(appState) {
+    constructor(appState, previewManager) {
         this.appState = appState;
+        this.previewManager = previewManager;
     }
 
     /**
@@ -66,6 +67,8 @@ export class PlacementStep {
             if (newPlacement.srp || newPlacement.vdp) {
                 utils.clearFieldError(`srp-${ctaType}`);
             }
+            // Update live preview
+            this.previewManager.updateLivePreview();
         };
 
         srpField.appendChild(srpCheckbox);
@@ -90,6 +93,8 @@ export class PlacementStep {
             if (newPlacement.srp || newPlacement.vdp) {
                 utils.clearFieldError(`srp-${ctaType}`);
             }
+            // Update live preview
+            this.previewManager.updateLivePreview();
         };
 
         vdpField.appendChild(vdpCheckbox);
@@ -145,6 +150,8 @@ export class PlacementStep {
                     desktopOnly: value === 'desktop'
                 }
             });
+            // Update live preview
+            this.previewManager.updateLivePreview();
         };
 
         deviceField.appendChild(deviceLabel);

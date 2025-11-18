@@ -30,7 +30,7 @@ export class WizardOrchestrator {
             3: new TreeConfigurationStep(appState, this.validationManager),
             4: new StylingStep(appState, this.previewManager, this.validationManager),
             5: new AdvancedStylingStep(appState, this.previewManager),
-            6: new PlacementStep(appState),
+            6: new PlacementStep(appState, this.previewManager),
             7: new PreviewStep(appState, this.previewManager)
         };
 

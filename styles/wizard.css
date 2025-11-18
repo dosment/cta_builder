@@ -59,10 +59,14 @@ body {
 
 /* Progress Bar (Full Width) */
 .progress-bar {
+    --progress-padding-top: 30px;
+    --progress-step-size: 40px;
+    --progress-track-thickness: 3px;
+    --progress-fill-thickness: 7px;
     background: var(--white);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    padding: var(--progress-padding-top, 30px) 30px 30px;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
@@ -204,10 +208,10 @@ select[id^="tree-"] option {
 .progress-bar::before {
     content: '';
     position: absolute;
-    top: 20px;
+    top: calc(var(--progress-padding-top, 30px) + (var(--progress-step-size, 40px) / 2) - (var(--progress-track-thickness, 3px) / 2));
     left: 0;
     right: 0;
-    height: 3px;
+    height: var(--progress-track-thickness, 3px);
     background: var(--gray-300);
     z-index: 0;
 }
@@ -215,10 +219,10 @@ select[id^="tree-"] option {
 .progress-bar::after {
     content: '';
     position: absolute;
-    top: 17px;
+    top: calc(var(--progress-padding-top, 30px) + (var(--progress-step-size, 40px) / 2) - (var(--progress-fill-thickness, 7px) / 2));
     left: 0;
     width: var(--progress-width, 0%);
-    height: 7px;
+    height: var(--progress-fill-thickness, 7px);
     background: var(--carnow-blue);
     z-index: 0;
     transition: width 0.3s ease;
@@ -235,8 +239,8 @@ select[id^="tree-"] option {
 }
 
 .step-number {
-    width: 40px;
-    height: 40px;
+    width: var(--progress-step-size, 40px);
+    height: var(--progress-step-size, 40px);
     border-radius: 50%;
     background: var(--gray-300);
     color: var(--gray-600);
