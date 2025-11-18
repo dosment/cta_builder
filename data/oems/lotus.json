@@ -56,24 +56,6 @@
       "letterSpacing": "0.1em",
       "borderWidth": "2px",
       "transition": "all 0.3s ease"
-    },
-    "secondary": {
-      "label": "Outlined Brand Button",
-      "backgroundColor": "transparent",
-      "textColor": "#174222",
-      "hoverBackgroundColor": "#174222",
-      "hoverTextColor": "#FBAA1E",
-      "borderColor": "#174222",
-      "borderRadius": "4px",
-      "textTransform": "uppercase",
-      "fontSize": "16px",
-      "fontWeight": "bold",
-      "padding": "11px",
-      "marginTop": "6px",
-      "marginBottom": "0px",
-      "letterSpacing": "0.1em",
-      "borderWidth": "2px",
-      "transition": "all 0.3s ease"
     }
   },
   "font": null
