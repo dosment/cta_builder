@@ -147,15 +147,11 @@ class Wizard {
      */
     updateNextButtonState() {
         const nextBtn = document.getElementById('next-btn');
-        const isValid = appState.validateCurrentStep();
+        const errors = appState.getValidationErrors();
+        const isValid = errors.length === 0;
 
-        if (appState.currentStep === appState.totalSteps) {
-            // On final step, it's "Generate Code"
-            nextBtn.disabled = !isValid;
-        } else {
-            // On other steps, it's "Next"
-            nextBtn.disabled = !isValid;
-        }
+        // Always keep Next button enabled so users can click it to see errors
+        nextBtn.disabled = false;
     }
 
     updateProgressBar(stepNumber) {
@@ -360,6 +356,8 @@ class Wizard {
 
             // Re-render to show/hide fields
             this.renderTreeConfiguration();
+            // Re-attach validation listeners after DOM rebuild
+            this.setupValidationWatching();
         };
 
         toggleSwitch.appendChild(checkbox);
@@ -471,6 +469,8 @@ class Wizard {
                 if (value === 'custom') {
                     appState.updateCtaConfig(ctaType, { dept: 'custom' });
                     this.renderTreeConfiguration(); // Re-render to show custom input
+                    // Re-attach validation listeners after DOM rebuild
+                    this.setupValidationWatching();
                 } else {
                     appState.updateCtaConfig(ctaType, { dept: parseInt(value), customDept: null });
                 }
