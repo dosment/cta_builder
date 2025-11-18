@@ -178,7 +178,7 @@ export class StyleSelector {
      */
     createCustomColorInputs(ctaType, config) {
         const colorRow = utils.createElement('div', {
-            className: 'config-row',
+            className: 'custom-color-row',
             style: 'margin-top: 12px; gap: 12px; display: flex; flex-direction: row;'
         });
 
