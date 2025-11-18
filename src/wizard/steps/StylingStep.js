@@ -13,7 +13,8 @@ export class StylingStep {
         this.validationManager = validationManager;
         this.styleSelector = new StyleSelector(
             appState,
-            (updatePreview) => this.handleStyleChange(updatePreview)
+            (updatePreview) => this.handleStyleChange(updatePreview),
+            previewManager
         );
     }
 

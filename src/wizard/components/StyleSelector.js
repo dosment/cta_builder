@@ -6,9 +6,10 @@
 import * as utils from '../../utils.js';
 
 export class StyleSelector {
-    constructor(appState, onStyleChange) {
+    constructor(appState, onStyleChange, previewManager = null) {
         this.appState = appState;
         this.onStyleChange = onStyleChange;
+        this.previewManager = previewManager;
     }
 
     /**
@@ -76,8 +77,9 @@ export class StyleSelector {
 
             customLabelInput.oninput = (e) => {
                 this.appState.updateCtaConfig(ctaType, { customLabel: e.target.value });
-                if (this.onStyleChange) {
-                    this.onStyleChange(true); // Update preview as user types
+                // Update preview directly without re-rendering the form
+                if (this.previewManager) {
+                    this.previewManager.updateLivePreview();
                 }
             };
 
