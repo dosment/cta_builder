@@ -4,7 +4,7 @@
   "brandColor": "#d8a016",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#d8a016",
       "textColor": "#000000",
       "hoverBackgroundColor": "#000000",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#d8a016",
       "hoverBackgroundColor": "#d8a016",

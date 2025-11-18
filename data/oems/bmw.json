@@ -4,7 +4,7 @@
   "brandColor": "#1C69D3",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#1C69D3",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#2658BB",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#1C69D3",
       "hoverBackgroundColor": "#1C69D3",
@@ -40,7 +40,7 @@
       "transition": "all 0.3s ease"
     },
     "darkBlue": {
-      "label": "Dark Blue",
+      "label": "Filled Dark Brand Button",
       "backgroundColor": "#2658BB",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#1C69D3",
@@ -58,7 +58,7 @@
       "transition": "all 0.3s ease"
     },
     "lightBlue": {
-      "label": "Light Blue",
+      "label": "Filled Light Brand Button",
       "backgroundColor": "#5895E9",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#1C69D3",
@@ -76,7 +76,7 @@
       "transition": "all 0.3s ease"
     },
     "whiteOnDark": {
-      "label": "White on Dark",
+      "label": "Filled Light Button",
       "backgroundColor": "#ffffff",
       "textColor": "#221F1F",
       "hoverBackgroundColor": "#221F1F",
@@ -94,7 +94,7 @@
       "transition": "all 0.3s ease"
     },
     "greyOutline": {
-      "label": "Grey Outline",
+      "label": "Outlined Gray Button",
       "backgroundColor": "transparent",
       "textColor": "#727171",
       "hoverBackgroundColor": "#727171",
@@ -112,7 +112,7 @@
       "transition": "all 0.3s ease"
     },
     "lightGrey": {
-      "label": "Light Grey",
+      "label": "Filled Light Gray Button",
       "backgroundColor": "#F6F6F6",
       "textColor": "#221F1F",
       "hoverBackgroundColor": "#1C69D3",

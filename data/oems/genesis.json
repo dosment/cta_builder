@@ -4,7 +4,7 @@
   "brandColor": "#1A1A1A",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#1A1A1A",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#A8A8A8",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#1A1A1A",
       "hoverBackgroundColor": "#1A1A1A",
@@ -76,7 +76,7 @@
       "transition": "all 0.3s ease"
     },
     "ghostWhite": {
-      "label": "Ghost White",
+      "label": "Transparent Light Border",
       "backgroundColor": "transparent",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#ffffff",

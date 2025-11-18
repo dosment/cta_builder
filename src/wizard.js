@@ -192,6 +192,18 @@ class Wizard {
         const errors = appState.getValidationErrors();
         const isValid = errors.length === 0;
 
+        const isFinalStep = appState.currentStep === appState.totalSteps;
+
+        if (isFinalStep) {
+            nextBtn.disabled = true;
+            nextBtn.classList.add('btn-inactive');
+            nextBtn.setAttribute('aria-disabled', 'true');
+            return;
+        }
+
+        nextBtn.classList.remove('btn-inactive');
+        nextBtn.removeAttribute('aria-disabled');
+
         // Always keep Next button enabled so users can click it to see errors
         nextBtn.disabled = false;
     }
@@ -223,6 +235,8 @@ class Wizard {
             nextBtn.textContent = 'Save This Config';
             nextBtn.style.display = 'block';
             nextBtn.disabled = true; // Disabled for now - will implement in future session
+             nextBtn.classList.add('btn-inactive');
+             nextBtn.setAttribute('aria-disabled', 'true');
             // On final step, clicking regenerates code and scrolls to it
             nextBtn.onclick = () => {
                 this.renderPreview();
@@ -234,6 +248,8 @@ class Wizard {
         } else {
             nextBtn.textContent = 'Next';
             nextBtn.style.display = 'block';
+            nextBtn.classList.remove('btn-inactive');
+            nextBtn.removeAttribute('aria-disabled');
             nextBtn.onclick = () => this.handleNext();
         }
 
@@ -387,27 +403,21 @@ class Wizard {
     createDeeplinkToggle(ctaType, config, ctaInfo) {
         const row = utils.createElement('div', { className: 'config-row' });
 
-        const toggleField = utils.createElement('div', { className: 'config-field' });
-        const toggleLabel = utils.createElement('label', {}, 'Use Deeplink:');
-
-        const toggleSwitch = utils.createElement('div', { className: 'toggle-switch' });
+        const toggleField = utils.createElement('div', { className: 'config-field checkbox-field' });
         const checkbox = utils.createElement('input', {
             type: 'checkbox',
             id: `deeplink-${ctaType}`,
             checked: config.useDeeplink
         });
-
-        const toggleText = utils.createElement('span', {
-            className: 'toggle-text',
-            id: `deeplink-text-${ctaType}`
-        }, config.useDeeplink ? 'Enabled' : 'Disabled');
+        const toggleLabel = utils.createElement('label', {
+            for: `deeplink-${ctaType}`,
+            className: 'inline-checkbox-label'
+        });
+        const labelText = utils.createElement('span', {}, 'Use Deeplink:');
 
         checkbox.onchange = (e) => {
             const isEnabled = e.target.checked;
             appState.updateCtaConfig(ctaType, { useDeeplink: isEnabled });
-
-            // Update toggle text
-            toggleText.textContent = isEnabled ? 'Enabled' : 'Disabled';
 
             // Re-render to show/hide fields
             this.renderTreeConfiguration();
@@ -415,10 +425,9 @@ class Wizard {
             this.setupValidationWatching();
         };
 
-        toggleSwitch.appendChild(checkbox);
-        toggleSwitch.appendChild(toggleText);
+        toggleLabel.appendChild(labelText);
+        toggleLabel.appendChild(checkbox);
         toggleField.appendChild(toggleLabel);
-        toggleField.appendChild(toggleSwitch);
         row.appendChild(toggleField);
 
         return row;
@@ -765,9 +774,10 @@ class Wizard {
 
     createStyleSelection(ctaType, config) {
         const container = utils.createElement('div', { className: 'config-row', style: 'flex-direction: column;' });
-        const row = utils.createElement('div', { className: 'config-row' });
 
-        const styleField = utils.createElement('div', { className: 'config-field' });
+        // Create dedicated row for Style Type dropdown
+        const styleTypeRow = utils.createElement('div', { className: 'config-row' });
+        const styleField = utils.createElement('div', { className: 'config-field', style: 'flex: 1;' });
         const styleLabel = utils.createElement('label', {}, 'Style Type:');
         const styleSelect = utils.createElement('select', { id: `style-${ctaType}` });
 
@@ -815,20 +825,20 @@ class Wizard {
 
         styleField.appendChild(styleLabel);
         styleField.appendChild(styleSelect);
-        row.appendChild(styleField);
-        container.appendChild(row);
+        styleTypeRow.appendChild(styleField);
+        container.appendChild(styleTypeRow);
 
         // Show custom color inputs if custom style is selected
         if (useCustomStyle) {
             const colorRow = utils.createElement('div', {
                 className: 'config-row',
-                style: 'margin-top: 12px; gap: 12px;'
+                style: 'margin-top: 12px; gap: 12px; display: flex; flex-direction: row;'
             });
 
             // Background Color
             const bgColorField = utils.createElement('div', {
                 className: 'config-field',
-                style: 'display: flex; flex-direction: column; gap: 4px;'
+                style: 'display: flex; flex-direction: column; gap: 4px; flex: 1;'
             });
             const bgColorLabel = utils.createElement('label', {}, 'Background:');
             const bgColorWrapper = utils.createElement('div', {
@@ -875,7 +885,7 @@ class Wizard {
             // Text Color
             const textColorField = utils.createElement('div', {
                 className: 'config-field',
-                style: 'display: flex; flex-direction: column; gap: 4px;'
+                style: 'display: flex; flex-direction: column; gap: 4px; flex: 1;'
             });
             const textColorLabel = utils.createElement('label', {}, 'Text:');
             const textColorWrapper = utils.createElement('div', {
@@ -922,7 +932,7 @@ class Wizard {
             // Border Color
             const borderColorField = utils.createElement('div', {
                 className: 'config-field',
-                style: 'display: flex; flex-direction: column; gap: 4px;'
+                style: 'display: flex; flex-direction: column; gap: 4px; flex: 1;'
             });
             const borderColorLabel = utils.createElement('label', {}, 'Border:');
             const borderColorWrapper = utils.createElement('div', {

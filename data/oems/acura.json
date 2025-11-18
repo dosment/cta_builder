@@ -4,7 +4,7 @@
   "brandColor": "#e6231e",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#e6231e",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#ffffff",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#e6231e",
       "hoverBackgroundColor": "#e6231e",
@@ -94,7 +94,7 @@
       "transition": "all 0.3s ease"
     },
     "darkMinimal": {
-      "label": "Dark Minimal",
+      "label": "Filled Black Button",
       "backgroundColor": "#000000",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#e6231e",

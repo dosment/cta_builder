@@ -4,7 +4,7 @@
   "brandColor": "#000000",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#000000",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#ffffff",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#000000",
       "hoverBackgroundColor": "#000000",
@@ -40,7 +40,7 @@
       "transition": "all 0.3s ease"
     },
     "inverse": {
-      "label": "Inverse",
+      "label": "Filled Inverted Button",
       "backgroundColor": "#FFFFFF",
       "textColor": "#000000",
       "hoverBackgroundColor": "#000000",
@@ -94,7 +94,7 @@
       "transition": "all 0.3s ease"
     },
     "ghost": {
-      "label": "Ghost",
+      "label": "Transparent Light Border",
       "backgroundColor": "transparent",
       "textColor": "#000000",
       "hoverBackgroundColor": "transparent",

@@ -4,7 +4,7 @@
   "brandColor": "#C3002F",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#C3002F",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#ffffff",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#C3002F",
       "hoverBackgroundColor": "#C3002F",
@@ -40,7 +40,7 @@
       "transition": "all 0.3s ease"
     },
     "greyAccent": {
-      "label": "Grey Accent",
+      "label": "Filled Gray Button",
       "backgroundColor": "#a6a6a6",
       "textColor": "#000000",
       "hoverBackgroundColor": "#C3002F",
@@ -58,7 +58,7 @@
       "transition": "all 0.3s ease"
     },
     "darkMinimal": {
-      "label": "Dark Minimal",
+      "label": "Filled Black Button",
       "backgroundColor": "#000000",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#C3002F",
@@ -76,7 +76,7 @@
       "transition": "all 0.3s ease"
     },
     "inverse": {
-      "label": "Inverse",
+      "label": "Filled Inverted Button",
       "backgroundColor": "#ffffff",
       "textColor": "#C3002F",
       "hoverBackgroundColor": "#C3002F",
@@ -94,7 +94,7 @@
       "transition": "all 0.3s ease"
     },
     "ghostWhite": {
-      "label": "Ghost White",
+      "label": "Transparent Light Border",
       "backgroundColor": "transparent",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#ffffff",
@@ -112,7 +112,7 @@
       "transition": "all 0.3s ease"
     },
     "greyOutline": {
-      "label": "Grey Outline",
+      "label": "Outlined Gray Button",
       "backgroundColor": "transparent",
       "textColor": "#a6a6a6",
       "hoverBackgroundColor": "#a6a6a6",

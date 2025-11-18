@@ -4,7 +4,7 @@
   "brandColor": "#00adef",
   "styles": {
     "primary": {
-      "label": "Primary",
+      "label": "Filled Brand Button",
       "backgroundColor": "#00adef",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#186db6",
@@ -22,7 +22,7 @@
       "transition": "all 0.3s ease"
     },
     "secondary": {
-      "label": "Secondary",
+      "label": "Outlined Brand Button",
       "backgroundColor": "transparent",
       "textColor": "#00adef",
       "hoverBackgroundColor": "#00adef",
@@ -58,7 +58,7 @@
       "transition": "all 0.3s ease"
     },
     "greyAccent": {
-      "label": "Grey Accent",
+      "label": "Filled Gray Button",
       "backgroundColor": "#7e8083",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#000000",
@@ -76,7 +76,7 @@
       "transition": "all 0.3s ease"
     },
     "inverse": {
-      "label": "Inverse",
+      "label": "Filled Inverted Button",
       "backgroundColor": "#ffffff",
       "textColor": "#00adef",
       "hoverBackgroundColor": "#00adef",
@@ -94,7 +94,7 @@
       "transition": "all 0.3s ease"
     },
     "darkMinimal": {
-      "label": "Dark Minimal",
+      "label": "Filled Black Button",
       "backgroundColor": "#000000",
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#00adef",
@@ -112,7 +112,7 @@
       "transition": "all 0.3s ease"
     },
     "greyOutline": {
-      "label": "Grey Outline",
+      "label": "Outlined Gray Button",
       "backgroundColor": "transparent",
       "textColor": "#7e8083",
       "hoverBackgroundColor": "#7e8083",
