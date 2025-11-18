@@ -49,28 +49,40 @@ function generateCss(oemData, selectedCtas, ctaConfigs) {
     css += '    border-style: solid;\n';
     css += '}\n\n';
 
-    // Generate unique style classes for each CTA
+    // Collect unique style types with their custom styles
+    const styleTypeMap = new Map();
+
     selectedCtas.forEach(ctaType => {
         const config = ctaConfigs[ctaType];
-        const styles = oemData.styles[config.styleType];
-        const customStyles = config.customStyles || {};
-        const className = utils.sanitizeCssClassName(ctaType);
+        const styleType = config.styleType;
 
-        // Merge base styles with custom overrides
-        const mergedStyles = { ...styles };
-        if (customStyles.borderRadius) mergedStyles.borderRadius = customStyles.borderRadius;
-        if (customStyles.marginTop) mergedStyles.marginTop = customStyles.marginTop;
-        if (customStyles.marginBottom) mergedStyles.marginBottom = customStyles.marginBottom;
-        if (customStyles.padding) mergedStyles.padding = customStyles.padding;
+        if (!styleTypeMap.has(styleType)) {
+            const styles = oemData.styles[styleType];
+            const customStyles = config.customStyles || {};
 
-        css += `.demo-cta-${className} {\n`;
+            // Merge base styles with custom overrides
+            const mergedStyles = { ...styles };
+            if (customStyles.borderRadius) mergedStyles.borderRadius = customStyles.borderRadius;
+            if (customStyles.marginTop) mergedStyles.marginTop = customStyles.marginTop;
+            if (customStyles.marginBottom) mergedStyles.marginBottom = customStyles.marginBottom;
+            if (customStyles.padding) mergedStyles.padding = customStyles.padding;
+
+            styleTypeMap.set(styleType, { mergedStyles, hoverStyles: styles });
+        }
+    });
+
+    // Generate CSS for each unique style type
+    styleTypeMap.forEach((styleData, styleType) => {
+        const { mergedStyles, hoverStyles } = styleData;
+
+        css += `.demo-cta-${styleType} {\n`;
         css += `    ${utils.generateCssFromStyles(mergedStyles)};\n`;
         css += '}\n\n';
 
         // Hover styles
-        css += `.demo-cta-${className}:hover {\n`;
-        css += `    background-color: ${styles.hoverBackgroundColor};\n`;
-        css += `    color: ${styles.hoverTextColor};\n`;
+        css += `.demo-cta-${styleType}:hover {\n`;
+        css += `    background-color: ${hoverStyles.hoverBackgroundColor};\n`;
+        css += `    color: ${hoverStyles.hoverTextColor};\n`;
         css += '}\n\n';
     });
 
@@ -140,7 +152,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
  */
 function generateCtaAttributes(ctaType, config, ctaLabels) {
     let attrs = '';
-    const baseClass = `demo-cta demo-cta-${utils.sanitizeCssClassName(ctaType)}`;
+    const baseClass = `demo-cta demo-cta-${config.styleType}`;
     let className = baseClass;
 
     // Add special classes for BuyNow
@@ -153,8 +165,14 @@ function generateCtaAttributes(ctaType, config, ctaLabels) {
         className += ' cn-buy-now';
     }
 
+    // Always add href for proper anchor behavior
+    attrs += ' href="#"';
+
     // Always add class attribute
     attrs += ` class="${className}"`;
+
+    // Accessibility attributes for button-like anchors
+    attrs += ' role="button" tabindex="0"';
 
     // Data-vin attribute for BuyNow and deeplinked CTAs
     if (ctaType === 'personalize_payment' || config.useDeeplink) {

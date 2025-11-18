@@ -934,7 +934,9 @@ class Wizard {
                 className: 'demo-cta',
                 href: '#',
                 style: `
-                    display: block;
+                    display: inline-block;
+                    width: auto;
+                    max-width: 100%;
                     text-align: center;
                     background-color: ${styles.backgroundColor};
                     color: ${styles.textColor};
