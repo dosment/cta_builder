@@ -13,40 +13,41 @@
             <p class="subtitle">Generate custom CTA code for your dealership</p>
         </header>
 
+        <!-- Progress Indicator (Full Width) -->
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">OEM</div>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">CTAs</div>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-label">Trees</div>
+            </div>
+            <div class="progress-step" data-step="4">
+                <div class="step-number">4</div>
+                <div class="step-label">Styling</div>
+            </div>
+            <div class="progress-step" data-step="5">
+                <div class="step-number">5</div>
+                <div class="step-label">Advanced</div>
+            </div>
+            <div class="progress-step" data-step="6">
+                <div class="step-number">6</div>
+                <div class="step-label">Placement</div>
+            </div>
+            <div class="progress-step" data-step="7">
+                <div class="step-number">7</div>
+                <div class="step-label">Preview</div>
+            </div>
+        </div>
+
         <div class="wizard-container">
             <!-- Main Wizard Content -->
             <div class="wizard-main">
-                <!-- Progress Indicator -->
-                <div class="progress-bar">
-                <div class="progress-step active" data-step="1">
-                    <div class="step-number">1</div>
-                    <div class="step-label">OEM</div>
-                </div>
-                <div class="progress-step" data-step="2">
-                    <div class="step-number">2</div>
-                    <div class="step-label">CTAs</div>
-                </div>
-                <div class="progress-step" data-step="3">
-                    <div class="step-number">3</div>
-                    <div class="step-label">Trees</div>
-                </div>
-                <div class="progress-step" data-step="4">
-                    <div class="step-number">4</div>
-                    <div class="step-label">Styling</div>
-                </div>
-                <div class="progress-step" data-step="5">
-                    <div class="step-number">5</div>
-                    <div class="step-label">Advanced</div>
-                </div>
-                <div class="progress-step" data-step="6">
-                    <div class="step-number">6</div>
-                    <div class="step-label">Placement</div>
-                </div>
-                <div class="progress-step" data-step="7">
-                    <div class="step-number">7</div>
-                    <div class="step-label">Preview</div>
-                </div>
-            </div>
 
             <!-- Step Content Area -->
             <div class="step-content" id="step-content">
@@ -113,18 +114,20 @@
                     <p class="step-description">Preview your CTAs and copy the generated code</p>
 
                     <div class="preview-container">
-                        <div class="preview-header">
-                            <h3>Live Preview</h3>
-                            <div class="preview-controls">
-                                <label for="preview-placement-select">Placement</label>
-                                <select id="preview-placement-select" class="form-control">
-                                    <option value="srp">SRP</option>
-                                    <option value="vdp">VDP</option>
-                                </select>
+                        <h3>Live Preview</h3>
+                        <div class="preview-dual-column">
+                            <div class="preview-column">
+                                <h4 class="preview-column-title">SRP</h4>
+                                <div id="preview-area-srp" class="preview-area">
+                                    <!-- Live preview of SRP CTAs -->
+                                </div>
                             </div>
-                        </div>
-                        <div id="preview-area" class="preview-area">
-                            <!-- Live preview of CTAs -->
+                            <div class="preview-column">
+                                <h4 class="preview-column-title">VDP</h4>
+                                <div id="preview-area-vdp" class="preview-area">
+                                    <!-- Live preview of VDP CTAs -->
+                                </div>
+                            </div>
                         </div>
                     </div>
 

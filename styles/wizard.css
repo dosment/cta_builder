@@ -57,6 +57,18 @@ body {
     opacity: 0.9;
 }
 
+/* Progress Bar (Full Width) */
+.progress-bar {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
 /* Wizard Container */
 .wizard-container {
     background: var(--white);
@@ -187,14 +199,6 @@ select[id^="tree-"] option {
 /* Main wizard content */
 .wizard-main {
     grid-column: 1;
-}
-
-/* Progress Bar */
-.progress-bar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 40px;
-    position: relative;
 }
 
 .progress-bar::before {
@@ -433,30 +437,29 @@ select[id^="tree-"] option {
     margin-bottom: 30px;
 }
 
-.preview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.preview-header h3 {
+.preview-container h3 {
     color: var(--carnow-navy);
     font-size: 1.3rem;
-    margin: 0;
+    margin-bottom: 20px;
 }
 
-.preview-controls {
+.preview-dual-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.preview-column {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
+    flex-direction: column;
 }
 
-.preview-controls label {
+.preview-column-title {
+    color: var(--carnow-navy);
+    font-size: 1.1rem;
     font-weight: 600;
-    color: var(--gray-800);
+    margin-bottom: 12px;
+    text-align: center;
 }
 
 .preview-area {
@@ -468,8 +471,6 @@ select[id^="tree-"] option {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    max-width: 420px;
-    margin: 0 auto;
     overflow: hidden;
 }
 
@@ -669,6 +670,10 @@ input[type="color"] {
     }
 
     .config-row {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-dual-column {
         grid-template-columns: 1fr;
     }
 

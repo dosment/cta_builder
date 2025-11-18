@@ -17,24 +17,22 @@ export class PreviewStep {
      * Render preview and code export step
      */
     render() {
-        const previewArea = document.getElementById('preview-area');
+        const previewAreaSrp = document.getElementById('preview-area-srp');
+        const previewAreaVdp = document.getElementById('preview-area-vdp');
         const codeOutput = document.getElementById('generated-code');
-        const placementSelect = document.getElementById('preview-placement-select');
 
-        if (placementSelect) {
-            placementSelect.value = this.currentPreviewPlacement;
-            placementSelect.onchange = (e) => {
-                this.currentPreviewPlacement = e.target.value;
-                this.render();
-                this.previewManager.updateLivePreview();
-            };
+        // Generate SRP preview
+        utils.clearElement(previewAreaSrp);
+        const srpCount = this.previewManager.renderPreviewCtas(previewAreaSrp, 'srp');
+        if (srpCount === 0) {
+            previewAreaSrp.innerHTML = `<p class="text-muted">No CTAs configured for SRP placement.</p>`;
         }
 
-        // Generate preview
-        utils.clearElement(previewArea);
-        const renderedCount = this.previewManager.renderPreviewCtas(previewArea, this.currentPreviewPlacement);
-        if (renderedCount === 0) {
-            previewArea.innerHTML = `<p class="text-muted">No CTAs configured for ${this.currentPreviewPlacement.toUpperCase()} placement.</p>`;
+        // Generate VDP preview
+        utils.clearElement(previewAreaVdp);
+        const vdpCount = this.previewManager.renderPreviewCtas(previewAreaVdp, 'vdp');
+        if (vdpCount === 0) {
+            previewAreaVdp.innerHTML = `<p class="text-muted">No CTAs configured for VDP placement.</p>`;
         }
 
         // Generate code
