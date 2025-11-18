@@ -154,40 +154,51 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
 function buildPlacementOverride(placement, overrides = {}, fallbackStyles = {}) {
     if (!fallbackStyles) fallbackStyles = {};
     const className = placement === 'srp' ? 'convertnow-srp' : 'convertnow-vdp';
-    const defaults = {
-        fontFamily: 'inherit',
-        fontSize: '16px',
-        fontWeight: '600',
-        lineHeight: '1.4',
-        letterSpacing: '0px',
-        borderRadius: fallbackStyles.borderRadius || '4px',
-        borderWidth: fallbackStyles.borderWidth || '2px',
-        marginTop: fallbackStyles.marginTop || '6px',
-        marginBottom: fallbackStyles.marginBottom || '6px',
-        padding: fallbackStyles.padding || '12px',
-        whiteSpace: 'normal'
-    };
 
-    const resolve = (prop) => {
-        if (overrides && overrides[prop]) return overrides[prop];
-        if (fallbackStyles && fallbackStyles[prop]) return fallbackStyles[prop];
-        return defaults[prop];
-    };
-
-    const wrapValue = overrides && overrides.textWrap === 'nowrap' ? 'nowrap' : 'normal';
-
+    // Only include properties that have been explicitly overridden
     let css = `.${className} {\n`;
-    css += `    font-family: ${resolve('fontFamily')};\n`;
-    css += `    font-size: ${resolve('fontSize')};\n`;
-    css += `    font-weight: ${resolve('fontWeight')};\n`;
-    css += `    line-height: ${resolve('lineHeight')};\n`;
-    css += `    letter-spacing: ${resolve('letterSpacing')};\n`;
-    css += `    border-radius: ${resolve('borderRadius')};\n`;
-    css += `    border-width: ${resolve('borderWidth')};\n`;
-    css += `    margin-top: ${resolve('marginTop')};\n`;
-    css += `    margin-bottom: ${resolve('marginBottom')};\n`;
-    css += `    padding: ${resolve('padding')};\n`;
-    css += `    white-space: ${wrapValue};\n`;
+
+    // Typography overrides
+    if (overrides.fontFamily) {
+        css += `    font-family: ${overrides.fontFamily} !important;\n`;
+    }
+    if (overrides.fontSize) {
+        css += `    font-size: ${overrides.fontSize} !important;\n`;
+    }
+    if (overrides.fontWeight) {
+        css += `    font-weight: ${overrides.fontWeight} !important;\n`;
+    }
+    if (overrides.lineHeight) {
+        css += `    line-height: ${overrides.lineHeight} !important;\n`;
+    }
+    if (overrides.letterSpacing) {
+        css += `    letter-spacing: ${overrides.letterSpacing} !important;\n`;
+    }
+
+    // Spacing overrides
+    if (overrides.borderRadius) {
+        css += `    border-radius: ${overrides.borderRadius} !important;\n`;
+    }
+    if (overrides.borderWidth) {
+        css += `    border-width: ${overrides.borderWidth} !important;\n`;
+    }
+    if (overrides.marginTop) {
+        css += `    margin-top: ${overrides.marginTop} !important;\n`;
+    }
+    if (overrides.marginBottom) {
+        css += `    margin-bottom: ${overrides.marginBottom} !important;\n`;
+    }
+    if (overrides.padding) {
+        css += `    padding: ${overrides.padding} !important;\n`;
+    }
+
+    // Text wrapping override
+    if (overrides.textWrap === 'nowrap') {
+        css += `    white-space: nowrap !important;\n`;
+    } else if (overrides.textWrap === 'wrap') {
+        css += `    white-space: normal !important;\n`;
+    }
+
     css += '}\n\n';
 
     return css;
