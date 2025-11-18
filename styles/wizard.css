@@ -209,7 +209,7 @@ select[id^="tree-"] option {
     right: 0;
     height: 3px;
     background: var(--gray-300);
-    z-index: 0;
+    z-index: 1;
 }
 
 .progress-bar::after {
@@ -220,7 +220,7 @@ select[id^="tree-"] option {
     width: var(--progress-width, 0%);
     height: 7px;
     background: var(--carnow-blue);
-    z-index: 0;
+    z-index: 1;
     transition: width 0.3s ease;
     border-radius: 3px;
 }
@@ -230,7 +230,7 @@ select[id^="tree-"] option {
     flex-direction: column;
     align-items: center;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     flex: 1;
 }
 
@@ -246,6 +246,8 @@ select[id^="tree-"] option {
     font-weight: 700;
     margin-bottom: 8px;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .step-label {
