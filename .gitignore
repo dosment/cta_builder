@@ -16,3 +16,6 @@ npm-debug.log*
 # Temporary files
 *.tmp
 .cache/
+
+# Testing documentation
+TESTING.md
