@@ -106,7 +106,10 @@ export class StyleSelector {
      * Create style type selection UI
      */
     createStyleSelection(ctaType, config) {
-        const container = utils.createElement('div', { className: 'config-row', style: 'flex-direction: column;' });
+        const container = utils.createElement('div', {
+            className: 'style-selection-container',
+            style: 'display: flex; flex-direction: column; margin-bottom: 15px;'
+        });
 
         // Create dedicated row for Style Type dropdown
         const styleTypeRow = utils.createElement('div', { className: 'config-row' });
@@ -178,8 +181,7 @@ export class StyleSelector {
      */
     createCustomColorInputs(ctaType, config) {
         const colorRow = utils.createElement('div', {
-            className: 'custom-color-row',
-            style: 'margin-top: 12px; gap: 12px; display: flex; flex-direction: row;'
+            className: 'custom-color-row'
         });
 
         // Background Color
