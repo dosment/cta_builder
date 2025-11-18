@@ -115,7 +115,6 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     // Special CSS for deeplinked CTAs
     const hasDeeplink = selectedCtas.some(type => ctaConfigs[type].useDeeplink);
     if (hasDeeplink) {
-        css += '/* Hide default BuyNow button when using deeplinks */\n';
         css += '.cn-bn1 {\n';
         css += '    display: none !important;\n';
         css += '}\n\n';
@@ -136,6 +135,7 @@ function buildPlacementOverride(placement, overrides = {}, fallbackStyles = {}) 
         lineHeight: '1.4',
         letterSpacing: '0px',
         borderRadius: fallbackStyles.borderRadius || '4px',
+        borderWidth: fallbackStyles.borderWidth || '2px',
         marginTop: fallbackStyles.marginTop || '6px',
         marginBottom: fallbackStyles.marginBottom || '6px',
         padding: fallbackStyles.padding || '12px',
@@ -157,6 +157,7 @@ function buildPlacementOverride(placement, overrides = {}, fallbackStyles = {}) 
     css += `    line-height: ${resolve('lineHeight')};\n`;
     css += `    letter-spacing: ${resolve('letterSpacing')};\n`;
     css += `    border-radius: ${resolve('borderRadius')};\n`;
+    css += `    border-width: ${resolve('borderWidth')};\n`;
     css += `    margin-top: ${resolve('marginTop')};\n`;
     css += `    margin-bottom: ${resolve('marginBottom')};\n`;
     css += `    padding: ${resolve('padding')};\n`;

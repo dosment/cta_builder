@@ -117,6 +117,9 @@ class Wizard {
         // Set up validation watching for this step
         this.setupValidationWatching();
 
+        // Toggle preview sidebar visibility (hide on step 7)
+        this.togglePreviewSidebarVisibility(stepNumber);
+
         // Update live preview
         this.updateLivePreview();
     }
@@ -137,6 +140,18 @@ class Wizard {
     updatePreviewThemeLabel(isDark) {
         if (!this.themeToggleLabel) return;
         this.themeToggleLabel.textContent = isDark ? 'Dark' : 'Light';
+    }
+
+    togglePreviewSidebarVisibility(stepNumber) {
+        const sidebar = document.getElementById('preview-sidebar');
+        if (!sidebar) return;
+
+        // Hide sidebar on step 7 (Preview & Export Code)
+        if (stepNumber === 7) {
+            sidebar.style.display = 'none';
+        } else {
+            sidebar.style.display = '';
+        }
     }
 
     /**
@@ -205,8 +220,9 @@ class Wizard {
 
         // Next button text and functionality
         if (stepNumber === appState.totalSteps) {
-            nextBtn.textContent = 'Generate Code';
+            nextBtn.textContent = 'Save This Config';
             nextBtn.style.display = 'block';
+            nextBtn.disabled = true; // Disabled for now - will implement in future session
             // On final step, clicking regenerates code and scrolls to it
             nextBtn.onclick = () => {
                 this.renderPreview();
@@ -1078,6 +1094,17 @@ class Wizard {
         );
         wrapper.appendChild(borderRadiusField);
 
+        const borderWidthField = this.createPlacementSlider(
+            placement,
+            'borderWidth',
+            'Border Width (px)',
+            0,
+            10,
+            1,
+            'px'
+        );
+        wrapper.appendChild(borderWidthField);
+
         const marginTopField = this.createPlacementSlider(
             placement,
             'marginTop',
@@ -1549,7 +1576,7 @@ class Wizard {
             backgroundColor: baseStyles.backgroundColor,
             textColor: baseStyles.textColor,
             borderColor: baseStyles.borderColor,
-            borderWidth: baseStyles.borderWidth,
+            borderWidth: resolve('borderWidth'),
             borderRadius: resolve('borderRadius'),
             textTransform: baseStyles.textTransform,
             fontSize: resolve('fontSize'),

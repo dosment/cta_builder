@@ -46,6 +46,7 @@ class AppState {
             lineHeight: null,
             letterSpacing: null,
             borderRadius: null,
+            borderWidth: null,
             marginTop: null,
             marginBottom: null,
             padding: null,
