@@ -1,6 +1,6 @@
-# CarNow CTA Builder
+# CTA Builder
 
-A front-end wizard tool for generating custom Call-to-Action (CTA) code for dealership websites.
+A front-end wizard tool for generating custom Call-to-Action (CTA) code for automotive dealership websites.
 
 ## Features
 
@@ -63,7 +63,7 @@ A front-end wizard tool for generating custom Call-to-Action (CTA) code for deal
 cta_builder/
 ├── index.html              # Main application page
 ├── styles/
-│   └── wizard.css          # CarNow-branded styles
+│   └── wizard.css          # Application styles
 ├── src/
 │   ├── state.js            # State management
 │   ├── utils.js            # Utility functions
@@ -82,7 +82,7 @@ cta_builder/
 ## Technical Details
 
 - **Framework:** Vanilla JavaScript ES6 modules
-- **Styling:** Custom CSS with CarNow branding
+- **Styling:** Custom CSS with OEM-specific branding
 - **Data:** JSON-based configuration files
 - **Browser Support:** Modern browsers with ES6 module support
 
@@ -99,7 +99,6 @@ The wizard generates copy-paste ready HTML/CSS code including:
 ## Notes
 
 - All generated code is production-ready
-- Follows CarNow CTA implementation standards
 - Supports both regular CTAs and deeplinked variants
 - Includes hover states and transitions
 - Live preview updates in real-time as you configure
