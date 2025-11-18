@@ -128,7 +128,7 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
 
 function buildPlacementOverride(placement, overrides = {}, fallbackStyles = {}) {
     if (!fallbackStyles) fallbackStyles = {};
-    const selector = placement === 'srp' ? '.cn-srp-only .demo-cta' : '.cn-vdp-only .demo-cta';
+    const className = placement === 'srp' ? 'convertnow-srp' : 'convertnow-vdp';
     const defaults = {
         fontFamily: 'inherit',
         fontSize: '16px',
@@ -150,7 +150,7 @@ function buildPlacementOverride(placement, overrides = {}, fallbackStyles = {}) 
 
     const wrapValue = overrides && overrides.textWrap === 'nowrap' ? 'nowrap' : 'normal';
 
-    let css = `${selector} {\n`;
+    let css = `.${className} {\n`;
     css += `    font-family: ${resolve('fontFamily')};\n`;
     css += `    font-size: ${resolve('fontSize')};\n`;
     css += `    font-weight: ${resolve('fontWeight')};\n`;
@@ -204,7 +204,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
         html += '        <a';
 
         // Add all attributes including class
-        html += generateCtaAttributes(ctaType, config, ctaLabels);
+        html += generateCtaAttributes(ctaType, config, ctaLabels, placementKey);
 
         html += `>${label}</a>\n`;
         html += `    </div>${closeWrapper}\n`;
@@ -218,7 +218,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
 /**
  * Generate attributes for CTA anchor tag
  */
-function generateCtaAttributes(ctaType, config, ctaLabels) {
+function generateCtaAttributes(ctaType, config, ctaLabels, placement) {
     let attrs = '';
     let styleClass;
 
@@ -229,7 +229,9 @@ function generateCtaAttributes(ctaType, config, ctaLabels) {
         styleClass = utils.sanitizeCssClassName(config.styleType || 'primary');
     }
 
-    const baseClass = `demo-cta demo-cta-${styleClass}`;
+    // Add placement-specific styling class
+    const placementClass = placement === 'srp' ? 'convertnow-srp' : 'convertnow-vdp';
+    const baseClass = `demo-cta demo-cta-${styleClass} ${placementClass}`;
     let className = baseClass;
 
     // Add special classes for BuyNow

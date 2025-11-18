@@ -149,7 +149,11 @@
             <div class="preview-sidebar" id="preview-sidebar">
                 <div class="preview-sidebar-header">
                     <h3>Live Preview</h3>
-                    <button id="preview-theme-toggle" class="btn btn-tertiary" type="button">Dark Mode</button>
+                    <label class="theme-toggle-switch">
+                        <input type="checkbox" id="preview-theme-toggle">
+                        <span class="theme-toggle-slider"></span>
+                        <span class="theme-toggle-label" id="theme-toggle-label">Light</span>
+                    </label>
                 </div>
                 <div id="live-preview-area" class="live-preview-area">
                     <p class="text-muted">Select CTAs to see preview</p>

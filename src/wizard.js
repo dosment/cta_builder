@@ -35,9 +35,10 @@ class Wizard {
         document.getElementById('prev-btn').addEventListener('click', () => this.handlePrev());
 
         this.previewThemeToggleBtn = document.getElementById('preview-theme-toggle');
+        this.themeToggleLabel = document.getElementById('theme-toggle-label');
         if (this.previewThemeToggleBtn) {
-            this.previewThemeToggleBtn.addEventListener('click', () => this.togglePreviewTheme());
-            this.updatePreviewThemeButton(false);
+            this.previewThemeToggleBtn.addEventListener('change', () => this.togglePreviewTheme());
+            this.updatePreviewThemeLabel(false);
         }
     }
 
@@ -124,14 +125,18 @@ class Wizard {
         const sidebar = document.getElementById('preview-sidebar');
         if (!sidebar) return;
 
-        const isDark = sidebar.classList.toggle('dark');
-        this.updatePreviewThemeButton(isDark);
+        const isDark = this.previewThemeToggleBtn.checked;
+        if (isDark) {
+            sidebar.classList.add('dark');
+        } else {
+            sidebar.classList.remove('dark');
+        }
+        this.updatePreviewThemeLabel(isDark);
     }
 
-    updatePreviewThemeButton(isDark) {
-        if (!this.previewThemeToggleBtn) return;
-        this.previewThemeToggleBtn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-        this.previewThemeToggleBtn.setAttribute('aria-pressed', isDark.toString());
+    updatePreviewThemeLabel(isDark) {
+        if (!this.themeToggleLabel) return;
+        this.themeToggleLabel.textContent = isDark ? 'Dark' : 'Light';
     }
 
     /**
@@ -1575,7 +1580,7 @@ class Wizard {
             utils.clearElement(livePreviewArea);
             const oemData = appState.data.oemData;
             const styles = oemData.styles.primary;
-            const appliedStyles = this.getPreviewStyles(styles, this.currentPreviewPlacement || 'srp');
+            const appliedStyles = this.getPreviewStyles(styles, 'srp');
 
             const sampleButton = utils.createElement('a', {
                 className: 'demo-cta demo-cta-primary',
@@ -1620,10 +1625,47 @@ class Wizard {
             return;
         }
 
-        // Clear and render preview CTAs
+        // Clear and render preview CTAs for both SRP and VDP
         utils.clearElement(livePreviewArea);
-        const rendered = this.renderPreviewCtas(livePreviewArea, 'live');
-        if (rendered === 0) {
+
+        // Check if there are any SRP CTAs
+        const hasSrpCtas = appState.data.selectedCtas.some(ctaType => {
+            const config = appState.getCtaConfig(ctaType);
+            return config && config.placement.srp;
+        });
+
+        // Check if there are any VDP CTAs
+        const hasVdpCtas = appState.data.selectedCtas.some(ctaType => {
+            const config = appState.getCtaConfig(ctaType);
+            return config && config.placement.vdp;
+        });
+
+        // Render SRP section
+        if (hasSrpCtas) {
+            const srpSection = utils.createElement('div', { className: 'preview-section' });
+            const srpTitle = utils.createElement('div', { className: 'preview-section-title' }, 'SRP Buttons');
+            srpSection.appendChild(srpTitle);
+
+            const srpContainer = utils.createElement('div', {});
+            this.renderPreviewCtas(srpContainer, 'srp');
+            srpSection.appendChild(srpContainer);
+            livePreviewArea.appendChild(srpSection);
+        }
+
+        // Render VDP section
+        if (hasVdpCtas) {
+            const vdpSection = utils.createElement('div', { className: 'preview-section' });
+            const vdpTitle = utils.createElement('div', { className: 'preview-section-title' }, 'VDP Buttons');
+            vdpSection.appendChild(vdpTitle);
+
+            const vdpContainer = utils.createElement('div', {});
+            this.renderPreviewCtas(vdpContainer, 'vdp');
+            vdpSection.appendChild(vdpContainer);
+            livePreviewArea.appendChild(vdpSection);
+        }
+
+        // If no CTAs are enabled for either placement
+        if (!hasSrpCtas && !hasVdpCtas) {
             livePreviewArea.innerHTML = '<p class="text-muted">Enable SRP or VDP placement to see CTAs here.</p>';
         }
     }
