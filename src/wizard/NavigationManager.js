@@ -65,6 +65,9 @@ export class NavigationManager {
      * Update progress bar visual state
      */
     updateProgressBar(stepNumber) {
+        const totalSteps = this.appState.totalSteps;
+        const progressBar = document.querySelector('.progress-bar');
+
         document.querySelectorAll('.progress-step').forEach((step, index) => {
             const num = index + 1;
             if (num < stepNumber) {
@@ -77,6 +80,12 @@ export class NavigationManager {
                 step.classList.remove('active', 'completed');
             }
         });
+
+        // Update the thick progress line width
+        if (progressBar) {
+            const progressPercent = ((stepNumber - 1) / (totalSteps - 1)) * 100;
+            progressBar.style.setProperty('--progress-width', `${progressPercent}%`);
+        }
     }
 
     /**

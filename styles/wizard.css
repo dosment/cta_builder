@@ -208,6 +208,19 @@ select[id^="tree-"] option {
     z-index: 0;
 }
 
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 0;
+    width: var(--progress-width, 0%);
+    height: 7px;
+    background: var(--carnow-blue);
+    z-index: 0;
+    transition: width 0.3s ease;
+    border-radius: 3px;
+}
+
 .progress-step {
     display: flex;
     flex-direction: column;
@@ -240,7 +253,7 @@ select[id^="tree-"] option {
 .progress-step.active .step-number {
     background: var(--carnow-navy);
     color: var(--white);
-    box-shadow: 0 0 15px var(--carnow-green), 0 0 30px var(--carnow-green);
+    box-shadow: 0 0 15px var(--carnow-blue), 0 0 30px var(--carnow-blue);
 }
 
 .progress-step.active .step-label {

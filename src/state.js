@@ -54,8 +54,10 @@ class AppState {
         });
 
         return {
-            srp: createEmpty(),
-            vdp: createEmpty()
+            separateStyling: false,  // Toggle for separate SRP/VDP styling
+            buttons: createEmpty(),  // Unified styling (when separateStyling is false)
+            srp: createEmpty(),      // SRP-specific (when separateStyling is true)
+            vdp: createEmpty()       // VDP-specific (when separateStyling is true)
         };
     }
 
@@ -183,6 +185,20 @@ class AppState {
                 ...updates
             };
         }
+    }
+
+    /**
+     * Toggle separate styling for SRP/VDP
+     */
+    setSeparateStyling(enabled) {
+        this.data.advancedStyles.separateStyling = enabled;
+    }
+
+    /**
+     * Get separate styling state
+     */
+    getSeparateStyling() {
+        return this.data.advancedStyles.separateStyling || false;
     }
 
     /**

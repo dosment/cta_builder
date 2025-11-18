@@ -228,7 +228,11 @@ export class PreviewManager {
      * Get preview styles with advanced overrides
      */
     getPreviewStyles(baseStyles, placement) {
-        const advanced = this.appState.data.advancedStyles?.[placement] || {};
+        const separateStyling = this.appState.getSeparateStyling();
+
+        // If separate styling is disabled, use 'buttons' for both SRP and VDP
+        const effectivePlacement = separateStyling ? placement : 'buttons';
+        const advanced = this.appState.data.advancedStyles?.[effectivePlacement] || {};
 
         const resolve = (prop, fallbackKey) => {
             if (advanced[prop]) {
