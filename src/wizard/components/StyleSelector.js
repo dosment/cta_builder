@@ -252,7 +252,7 @@ export class StyleSelector {
             type: 'color',
             id: `custom-${colorType}-picker-${ctaType}`,
             value: initialValue,
-            style: 'width: 50px; height: 35px; cursor: pointer;'
+            style: 'width: 60px; height: 40px; cursor: pointer;'
         });
 
         const colorText = utils.createElement('input', {
