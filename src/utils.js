@@ -18,6 +18,9 @@ export function createElement(tag, attributes = {}, content = '') {
             });
         } else if (key.startsWith('on') && typeof value === 'function') {
             element.addEventListener(key.substring(2).toLowerCase(), value);
+        } else if (key === 'checked' || key === 'disabled' || key === 'selected') {
+            // Boolean attributes must be set as properties, not attributes
+            element[key] = Boolean(value);
         } else {
             element.setAttribute(key, value);
         }
