@@ -75,25 +75,25 @@
   "departments": [
     {
       "id": 2844,
-      "label": "Schedule Test Drive - 2844",
+      "label": "2844 - Schedule Test Drive",
       "category": "test_drive",
       "isStandard": true
     },
     {
       "id": 2845,
-      "label": "E-Price / Get E-Price - 2845",
+      "label": "2845 - E-Price",
       "category": "eprice",
       "isStandard": true
     },
     {
       "id": 3346,
-      "label": "Value Trade / Trade - 3346",
+      "label": "3346 - Value Trade",
       "category": "trade",
       "isStandard": true
     },
     {
       "id": 3347,
-      "label": "Pre-Qualify / Credit - 3347",
+      "label": "3347 - Pre-Qualify",
       "category": "credit",
       "isStandard": true
     },
