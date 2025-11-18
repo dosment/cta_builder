@@ -118,11 +118,11 @@ export class PreviewManager {
     renderSampleButton(container) {
         utils.clearElement(container);
         const oemData = this.appState.data.oemData;
-        const styles = oemData.styles.primary;
+        const styles = oemData.styles.oemTestFilled || oemData.styles.primary;
         const appliedStyles = this.getPreviewStyles(styles, 'srp');
 
         const sampleButton = utils.createElement('a', {
-            className: 'demo-cta demo-cta-primary',
+            className: 'demo-cta demo-cta-oemtestfilled',
             href: '#',
             style: this.buildButtonStyle(appliedStyles)
         }, `Sample ${oemData.name} Button`);

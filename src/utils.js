@@ -139,11 +139,14 @@ export function generateCssFromStyles(styles) {
         textTransform: 'text-transform',
         fontSize: 'font-size',
         fontWeight: 'font-weight',
+        fontFamily: 'font-family',
+        lineHeight: 'line-height',
         padding: 'padding',
         marginTop: 'margin-top',
         marginBottom: 'margin-bottom',
         letterSpacing: 'letter-spacing',
         borderWidth: 'border-width',
+        whiteSpace: 'white-space',
         transition: 'transition'
     };
 

@@ -77,14 +77,40 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         }
     });
 
+    // Check if we need separate SRP/VDP classes
+    const separateStyling = advancedStyles?.separateStyling || false;
+    const srpStyles = separateStyling ? (advancedStyles.srp || {}) : (advancedStyles.buttons || {});
+    const vdpStyles = separateStyling ? (advancedStyles.vdp || {}) : (advancedStyles.buttons || {});
+    const needsSeparateClasses = separateStyling && JSON.stringify(srpStyles) !== JSON.stringify(vdpStyles);
+
     // Generate standard OEM styles
     styleTypeMap.forEach((styleData, styleType) => {
         if (!styleData) return;
 
-        css += `.demo-cta-${styleType} {\n`;
-        css += `    ${utils.generateCssFromStyles(styleData)};\n`;
-        css += '}\n\n';
+        if (needsSeparateClasses) {
+            // Generate separate classes for SRP and VDP
+            const mergedSrp = mergeAdvancedStyles(styleData, advancedStyles, 'srp');
+            const mergedVdp = mergeAdvancedStyles(styleData, advancedStyles, 'vdp');
 
+            // SRP variant
+            css += `.cn-srp-only .demo-cta-${styleType} {\n`;
+            css += `    ${utils.generateCssFromStyles(mergedSrp)};\n`;
+            css += '}\n\n';
+
+            // VDP variant
+            css += `.cn-vdp-only .demo-cta-${styleType} {\n`;
+            css += `    ${utils.generateCssFromStyles(mergedVdp)};\n`;
+            css += '}\n\n';
+        } else {
+            // Unified: merge advanced styles directly into base class
+            const mergedStyles = mergeAdvancedStyles(styleData, advancedStyles);
+
+            css += `.demo-cta-${styleType} {\n`;
+            css += `    ${utils.generateCssFromStyles(mergedStyles)};\n`;
+            css += '}\n\n';
+        }
+
+        // Hover states (same for both placements)
         css += `.demo-cta-${styleType}:hover {\n`;
         css += `    background-color: ${styleData.hoverBackgroundColor};\n`;
         css += `    color: ${styleData.hoverTextColor};\n`;
@@ -109,17 +135,7 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         css += '}\n\n';
     });
 
-    // Use unified 'buttons' styling if not separated, otherwise use placement-specific
-    const separateStyling = advancedStyles.separateStyling || false;
-    const srpStyles = separateStyling ? (advancedStyles.srp || {}) : (advancedStyles.buttons || {});
-    const vdpStyles = separateStyling ? (advancedStyles.vdp || {}) : (advancedStyles.buttons || {});
-
-    // Only generate placement overrides if there are actual overrides to apply
-    const srpCss = buildPlacementOverride('srp', srpStyles);
-    if (srpCss) css += srpCss;
-
-    const vdpCss = buildPlacementOverride('vdp', vdpStyles);
-    if (vdpCss) css += vdpCss;
+    // Advanced styles are now merged into OEM classes above, no separate override classes needed
 
     // Special CSS for deeplinked CTAs
     const hasDeeplink = selectedCtas.some(type => ctaConfigs[type].useDeeplink);
@@ -204,93 +220,91 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         });
     }
 
-    // Device visibility classes using media queries
-    css += '/* Mobile-only visibility */\n';
-    css += '.cn-mobile-only {\n';
-    css += '    display: block;\n';
-    css += '}\n\n';
-    css += '@media (min-width: 768px) {\n';
-    css += '    .cn-mobile-only {\n';
-    css += '        display: none !important;\n';
-    css += '    }\n';
-    css += '}\n\n';
+    // Device visibility classes - only generate if actually used
+    const hasMobileOnly = selectedCtas.some(type => {
+        const config = ctaConfigs[type];
+        return config.placement.mobileOnly && !config.placement.desktopOnly;
+    });
 
-    css += '/* Desktop-only visibility */\n';
-    css += '.cn-desktop-only {\n';
-    css += '    display: none;\n';
-    css += '}\n\n';
-    css += '@media (min-width: 768px) {\n';
-    css += '    .cn-desktop-only {\n';
-    css += '        display: block !important;\n';
-    css += '    }\n';
-    css += '}\n\n';
+    const hasDesktopOnly = selectedCtas.some(type => {
+        const config = ctaConfigs[type];
+        return config.placement.desktopOnly && !config.placement.mobileOnly;
+    });
+
+    if (hasMobileOnly) {
+        css += '/* Mobile-only visibility */\n';
+        css += '.cn-mobile-only {\n';
+        css += '    display: block;\n';
+        css += '}\n\n';
+        css += '@media (min-width: 768px) {\n';
+        css += '    .cn-mobile-only {\n';
+        css += '        display: none !important;\n';
+        css += '    }\n';
+        css += '}\n\n';
+    }
+
+    if (hasDesktopOnly) {
+        css += '/* Desktop-only visibility */\n';
+        css += '.cn-desktop-only {\n';
+        css += '    display: none;\n';
+        css += '}\n\n';
+        css += '@media (min-width: 768px) {\n';
+        css += '    .cn-desktop-only {\n';
+        css += '        display: block !important;\n';
+        css += '    }\n';
+        css += '}\n\n';
+    }
 
     css += '</style>';
 
     return css;
 }
 
-function buildPlacementOverride(placement, overrides = {}) {
-    const className = placement === 'srp' ? 'convertnow-srp' : 'convertnow-vdp';
+/**
+ * Merge advanced styling overrides into base OEM style data
+ * @param {Object} baseStyles - Base OEM style object
+ * @param {Object} advancedStyles - Advanced styling configuration
+ * @param {String} placement - Optional placement ('srp' or 'vdp') for separate styling
+ */
+function mergeAdvancedStyles(baseStyles, advancedStyles, placement = null) {
+    if (!advancedStyles) return baseStyles;
 
-    // Collect only properties that have been explicitly overridden
-    let properties = [];
+    const merged = { ...baseStyles };
+    const separateStyling = advancedStyles.separateStyling || false;
 
-    // Typography overrides
-    if (overrides.fontFamily) {
-        properties.push(`    font-family: ${overrides.fontFamily} !important;`);
-    }
-    if (overrides.textTransform) {
-        properties.push(`    text-transform: ${overrides.textTransform} !important;`);
-    }
-    if (overrides.fontSize) {
-        properties.push(`    font-size: ${overrides.fontSize} !important;`);
-    }
-    if (overrides.fontWeight) {
-        properties.push(`    font-weight: ${overrides.fontWeight} !important;`);
-    }
-    if (overrides.lineHeight) {
-        properties.push(`    line-height: ${overrides.lineHeight} !important;`);
-    }
-    if (overrides.letterSpacing) {
-        properties.push(`    letter-spacing: ${overrides.letterSpacing} !important;`);
+    // Determine which styles to apply
+    let stylesToApply;
+    if (separateStyling && placement) {
+        // Use placement-specific styles
+        stylesToApply = advancedStyles[placement] || {};
+    } else {
+        // Use unified buttons styles
+        stylesToApply = advancedStyles.buttons || {};
     }
 
-    // Spacing overrides
-    if (overrides.borderRadius) {
-        properties.push(`    border-radius: ${overrides.borderRadius} !important;`);
-    }
-    if (overrides.borderWidth) {
-        properties.push(`    border-width: ${overrides.borderWidth} !important;`);
-    }
-    if (overrides.marginTop) {
-        properties.push(`    margin-top: ${overrides.marginTop} !important;`);
-    }
-    if (overrides.marginBottom) {
-        properties.push(`    margin-bottom: ${overrides.marginBottom} !important;`);
-    }
-    if (overrides.padding) {
-        properties.push(`    padding: ${overrides.padding} !important;`);
+    // Apply overrides
+    if (stylesToApply.fontFamily) merged.fontFamily = stylesToApply.fontFamily;
+    if (stylesToApply.textTransform) merged.textTransform = stylesToApply.textTransform;
+    if (stylesToApply.fontSize) merged.fontSize = stylesToApply.fontSize;
+    if (stylesToApply.fontWeight) merged.fontWeight = stylesToApply.fontWeight;
+    if (stylesToApply.lineHeight) merged.lineHeight = stylesToApply.lineHeight;
+    if (stylesToApply.letterSpacing) merged.letterSpacing = stylesToApply.letterSpacing;
+    if (stylesToApply.borderRadius) merged.borderRadius = stylesToApply.borderRadius;
+    if (stylesToApply.borderWidth) merged.borderWidth = stylesToApply.borderWidth;
+    if (stylesToApply.marginTop) merged.marginTop = stylesToApply.marginTop;
+    if (stylesToApply.marginBottom) merged.marginBottom = stylesToApply.marginBottom;
+    if (stylesToApply.padding) merged.padding = stylesToApply.padding;
+
+    // Handle text wrap
+    if (stylesToApply.textWrap === 'nowrap') {
+        merged.whiteSpace = 'nowrap';
+    } else if (stylesToApply.textWrap === 'wrap') {
+        merged.whiteSpace = 'normal';
     }
 
-    // Text wrapping override
-    if (overrides.textWrap === 'nowrap') {
-        properties.push(`    white-space: nowrap !important;`);
-    } else if (overrides.textWrap === 'wrap') {
-        properties.push(`    white-space: normal !important;`);
-    }
-
-    // Only return CSS if there are properties to apply
-    if (properties.length === 0) {
-        return null;
-    }
-
-    let css = `.${className} {\n`;
-    css += properties.join('\n') + '\n';
-    css += '}\n\n';
-
-    return css;
+    return merged;
 }
+
 
 /**
  * Generate HTML section for SRP or VDP
@@ -298,13 +312,6 @@ function buildPlacementOverride(placement, overrides = {}) {
 function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oemData, advancedStyles) {
     const placementKey = placement.toLowerCase();
     const wrapperClass = placement === 'SRP' ? 'cn-srp-only' : 'cn-vdp-only';
-
-    // Determine if this placement has advanced style overrides
-    const separateStyling = advancedStyles?.separateStyling || false;
-    const placementStyles = separateStyling
-        ? (advancedStyles?.[placementKey] || {})
-        : (advancedStyles?.buttons || {});
-    const hasPlacementOverrides = Object.keys(placementStyles).length > 0;
 
     let html = `<!-- ${placement} CTAs -->\n`;
     html += `<div class="${wrapperClass}">\n`;
@@ -338,7 +345,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
         html += '        <a';
 
         // Add all attributes including class
-        html += generateCtaAttributes(ctaType, config, ctaLabels, placementKey, hasPlacementOverrides);
+        html += generateCtaAttributes(ctaType, config, ctaLabels, placementKey);
 
         html += `>${safeLabel}</a>\n`;
         html += `    </div>${closeWrapper}\n`;
@@ -352,7 +359,7 @@ function generateHtmlSection(placement, selectedCtas, ctaConfigs, ctaLabels, oem
 /**
  * Generate attributes for CTA anchor tag
  */
-function generateCtaAttributes(ctaType, config, ctaLabels, placement, hasPlacementOverrides) {
+function generateCtaAttributes(ctaType, config, ctaLabels, placement) {
     let attrs = '';
     let styleClass;
 
@@ -363,12 +370,8 @@ function generateCtaAttributes(ctaType, config, ctaLabels, placement, hasPlaceme
         styleClass = utils.sanitizeCssClassName(config.styleType || 'oemTestFilled');
     }
 
-    // Only add placement-specific styling class if there are overrides
+    // Simple class name - advanced styles are already merged into the OEM class
     let className = `demo-cta demo-cta-${styleClass}`;
-    if (hasPlacementOverrides) {
-        const placementClass = placement === 'srp' ? 'convertnow-srp' : 'convertnow-vdp';
-        className += ` ${placementClass}`;
-    }
 
     // Add special classes for BuyNow
     if (ctaType === 'personalize_payment' && !config.useDeeplink) {
