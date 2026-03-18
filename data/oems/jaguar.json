@@ -9,6 +9,7 @@
       "textColor": "#ffffff",
       "hoverBackgroundColor": "#626261",
       "hoverTextColor": "#ffffff",
+      "hoverBorderColor": "#626261",
       "borderColor": "#3c3c3b",
       "borderRadius": "6px",
       "textTransform": "uppercase",
@@ -27,6 +28,7 @@
       "textColor": "#3c3c3b",
       "hoverBackgroundColor": "#3c3c3b",
       "hoverTextColor": "#ffffff",
+      "hoverBorderColor": "#3c3c3b",
       "borderColor": "#3c3c3b",
       "borderRadius": "6px",
       "textTransform": "uppercase",
@@ -45,6 +47,7 @@
       "textColor": "#FFFFFF",
       "hoverBackgroundColor": "#444444",
       "hoverTextColor": "#FFFFFF",
+      "hoverBorderColor": "#444444",
       "borderColor": "#000000",
       "borderRadius": "0px",
       "textTransform": "uppercase",
@@ -63,6 +66,7 @@
       "textColor": "#141414",
       "hoverBackgroundColor": "#FFFFFF",
       "hoverTextColor": "#000000",
+      "hoverBorderColor": "#FFFFFF",
       "borderColor": "#F9F9F9",
       "borderRadius": "0px",
       "textTransform": "uppercase",
@@ -75,12 +79,13 @@
       "borderWidth": "2px",
       "transition": "all 0.3s ease"
     },
-    "outline-dark": {
+    "outlineDark": {
       "label": "Outline Dark",
       "backgroundColor": "transparent",
       "textColor": "#000000",
       "hoverBackgroundColor": "#000000",
       "hoverTextColor": "#FFFFFF",
+      "hoverBorderColor": "#000000",
       "borderColor": "#000000",
       "borderRadius": "0px",
       "textTransform": "uppercase",
@@ -93,12 +98,13 @@
       "borderWidth": "2px",
       "transition": "all 0.3s ease"
     },
-    "outline-light": {
+    "outlineLight": {
       "label": "Outline Light",
       "backgroundColor": "transparent",
       "textColor": "#FFFFFF",
       "hoverBackgroundColor": "#FFFFFF",
       "hoverTextColor": "#000000",
+      "hoverBorderColor": "#FFFFFF",
       "borderColor": "#FFFFFF",
       "borderRadius": "0px",
       "textTransform": "uppercase",
@@ -117,6 +123,7 @@
       "textColor": "#3C3C3B",
       "hoverBackgroundColor": "#3C3C3B",
       "hoverTextColor": "#FFFFFF",
+      "hoverBorderColor": "#3C3C3B",
       "borderColor": "#FFFFFF",
       "borderRadius": "0px",
       "textTransform": "uppercase",
@@ -129,12 +136,13 @@
       "borderWidth": "2px",
       "transition": "all 0.3s ease"
     },
-    "ghost-grey": {
+    "ghostGrey": {
       "label": "Ghost Grey",
       "backgroundColor": "transparent",
       "textColor": "#444444",
       "hoverBackgroundColor": "#444444",
       "hoverTextColor": "#FFFFFF",
+      "hoverBorderColor": "#444444",
       "borderColor": "#444444",
       "borderRadius": "0px",
       "textTransform": "uppercase",

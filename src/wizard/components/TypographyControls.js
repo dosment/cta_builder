@@ -24,7 +24,7 @@ export class TypographyControls {
 
         // Font family
         const fontFamilies = [
-            { value: '', label: 'Inherit from site' },
+            { value: '', label: 'Default (Arial)' },
             { value: 'Arial, sans-serif', label: 'Arial' },
             { value: '\'Roboto\', sans-serif', label: 'Roboto' },
             { value: '\'Montserrat\', sans-serif', label: 'Montserrat' },
@@ -40,7 +40,7 @@ export class TypographyControls {
 
         // Text transform
         const textTransforms = [
-            { value: '', label: 'Inherit from site' },
+            { value: '', label: 'Default (Uppercase)' },
             { value: 'none', label: 'None' },
             { value: 'capitalize', label: 'Capitalize' },
             { value: 'uppercase', label: 'Uppercase' },
@@ -68,11 +68,13 @@ export class TypographyControls {
 
         // Font weight
         const fontWeights = [
-            { value: '', label: 'Inherit from site' },
+            { value: '', label: 'Default (Normal)' },
             { value: '400', label: 'Regular (400)' },
             { value: '500', label: 'Medium (500)' },
             { value: '600', label: 'Semi-bold (600)' },
-            { value: '700', label: 'Bold (700)' }
+            { value: '700', label: 'Bold (700)' },
+            { value: '800', label: 'Extra-bold (800)' },
+            { value: '900', label: 'Black (900)' }
         ];
         const fontWeightField = this.createPlacementSelect(
             placement,
@@ -98,11 +100,11 @@ export class TypographyControls {
         const letterSpacingField = this.createPlacementSlider(
             placement,
             'letterSpacing',
-            'Letter Spacing (px)',
-            -2,
-            6,
-            0.1,
-            'px'
+            'Letter Spacing (em)',
+            -0.05,
+            0.3,
+            0.01,
+            'em'
         );
         slidersRow.appendChild(letterSpacingField);
 
@@ -317,17 +319,12 @@ export class TypographyControls {
             return {};
         }
 
-        if (placement === 'buttons') {
-            // Unified buttons use primary style as base
-            return oemData.styles.primary || {};
-        }
-
-        if (placement === 'srp') {
-            return oemData.styles.primary || {};
+        if (placement === 'buttons' || placement === 'srp') {
+            return oemData.styles.oemTestFilled || {};
         }
 
         if (placement === 'vdp') {
-            return oemData.styles.secondary || oemData.styles.primary || {};
+            return oemData.styles.oemTestOutline || oemData.styles.oemTestFilled || {};
         }
 
         return {};
@@ -338,18 +335,18 @@ export class TypographyControls {
      */
     getFallbackValue(property) {
         const defaults = {
-            fontFamily: 'inherit',
+            fontFamily: 'Arial, Helvetica, sans-serif',
             fontSize: '16px',
-            fontWeight: '600',
+            fontWeight: 'normal',
             lineHeight: '1.4',
-            letterSpacing: '0px',
-            borderRadius: '4px',
-            borderWidth: '2px',
-            marginTop: '6px',
-            marginBottom: '6px',
-            padding: '12px',
+            letterSpacing: '0.08em',
+            borderRadius: '6px',
+            borderWidth: '1px',
+            marginTop: '4px',
+            marginBottom: '4px',
+            padding: '8px',
             textWrap: 'wrap',
-            textTransform: 'none'
+            textTransform: 'uppercase'
         };
 
         return defaults[property] || '';

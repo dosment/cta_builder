@@ -273,6 +273,12 @@ export class PreviewManager {
             return this.getFallbackValue(fallbackKey || prop);
         };
 
+        // Use OEM font if available, otherwise fall back to default
+        const oemFont = this.appState.data.oemData?.font;
+        const resolvedFontFamily = advanced.fontFamily
+            || (baseStyles && baseStyles.fontFamily)
+            || (oemFont ? `'${oemFont}', Arial, Helvetica, sans-serif` : this.getFallbackValue('fontFamily'));
+
         return {
             backgroundColor: baseStyles.backgroundColor,
             textColor: baseStyles.textColor,
@@ -282,7 +288,7 @@ export class PreviewManager {
             textTransform: resolve('textTransform'),
             fontSize: resolve('fontSize'),
             fontWeight: resolve('fontWeight'),
-            fontFamily: resolve('fontFamily'),
+            fontFamily: resolvedFontFamily,
             lineHeight: resolve('lineHeight'),
             letterSpacing: resolve('letterSpacing'),
             padding: resolve('padding'),
@@ -298,18 +304,18 @@ export class PreviewManager {
      */
     getFallbackValue(property) {
         const defaults = {
-            fontFamily: 'inherit',
+            fontFamily: 'Arial, Helvetica, sans-serif',
             fontSize: '16px',
-            fontWeight: '600',
+            fontWeight: 'normal',
             lineHeight: '1.4',
-            letterSpacing: '0px',
-            borderRadius: '4px',
-            borderWidth: '2px',
-            marginTop: '6px',
-            marginBottom: '6px',
-            padding: '12px',
+            letterSpacing: '0.08em',
+            borderRadius: '6px',
+            borderWidth: '1px',
+            marginTop: '4px',
+            marginBottom: '4px',
+            padding: '8px',
             textWrap: 'wrap',
-            textTransform: 'none'
+            textTransform: 'uppercase'
         };
 
         return defaults[property] || '';
@@ -361,11 +367,13 @@ export class PreviewManager {
             justify-content: center;
             align-items: center;
             text-align: center;
+            box-sizing: border-box;
             background-color: ${styles.backgroundColor};
             color: ${styles.textColor};
             border: ${styles.borderWidth} solid ${styles.borderColor};
             border-radius: ${styles.borderRadius};
             text-transform: ${styles.textTransform};
+            font-family: ${styles.fontFamily};
             font-size: ${styles.fontSize};
             font-weight: ${styles.fontWeight};
             line-height: ${styles.lineHeight};
@@ -373,7 +381,6 @@ export class PreviewManager {
             padding: ${styles.padding};
             margin-top: ${styles.marginTop};
             margin-bottom: ${styles.marginBottom};
-            font-family: ${styles.fontFamily};
             white-space: ${styles.whiteSpace};
             transition: ${styles.transition};
             text-decoration: none;

@@ -49,17 +49,33 @@ export function generateCode(stateData, loadedData) {
 function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     let css = '<style>\n';
 
-    // Base .demo-cta class with common styles
+    // Base .demo-cta class — comprehensive reset so buttons never inherit from site
+    const fontFamily = oemData.font
+        ? `'${oemData.font}', Arial, Helvetica, sans-serif`
+        : 'Arial, Helvetica, sans-serif';
     css += '.demo-cta {\n';
     css += '    display: inline-flex;\n';
     css += '    justify-content: center;\n';
     css += '    align-items: center;\n';
     css += '    text-align: center;\n';
     css += '    text-decoration: none !important;\n';
-    css += '    font-size: 13px;\n';
+    css += `    font-family: ${fontFamily};\n`;
+    css += '    font-size: 16px;\n';
+    css += '    font-weight: normal;\n';
+    css += '    line-height: 1.4;\n';
+    css += '    letter-spacing: 0.08em;\n';
+    css += '    text-transform: uppercase;\n';
+    css += '    white-space: normal;\n';
     css += '    cursor: pointer;\n';
     css += '    border-style: solid;\n';
+    css += '    border-width: 1px;\n';
+    css += '    border-radius: 6px;\n';
+    css += '    padding: 8px;\n';
+    css += '    margin-top: 4px;\n';
+    css += '    margin-bottom: 4px;\n';
     css += '    width: 100%;\n';
+    css += '    box-sizing: border-box;\n';
+    css += '    transition: all 0.3s ease;\n';
     css += '}\n\n';
 
     css += '.demo-cta:hover {\n';
@@ -119,24 +135,47 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
         css += `.demo-cta-${styleType}:hover {\n`;
         css += `    background-color: ${styleData.hoverBackgroundColor};\n`;
         css += `    color: ${styleData.hoverTextColor};\n`;
+        css += `    border-color: ${styleData.hoverBorderColor || styleData.hoverBackgroundColor};\n`;
         css += '}\n\n';
     });
 
     // Generate custom styles for each CTA with custom styling
+    // Colors come from user picks; padding/margin/etc come from base .demo-cta
+    // Advanced style overrides are merged in just like OEM styles
     customStyleMap.forEach((customStyle, ctaType) => {
         const sanitizedType = utils.sanitizeCssClassName(ctaType);
-        css += `.demo-cta-custom-${sanitizedType} {\n`;
-        css += `    background-color: ${customStyle.backgroundColor};\n`;
-        css += `    color: ${customStyle.textColor};\n`;
-        css += `    border-color: ${customStyle.borderColor};\n`;
-        css += `    border-width: 2px;\n`;
-        css += `    text-transform: none;\n`;
-        css += `    transition: all 0.3s ease;\n`;
-        css += '}\n\n';
+
+        // Base custom style — only colors + text-transform override
+        const baseCustom = {
+            backgroundColor: customStyle.backgroundColor,
+            textColor: customStyle.textColor,
+            borderColor: customStyle.borderColor,
+            textTransform: 'none'
+        };
+
+        if (needsSeparateClasses) {
+            const mergedSrp = mergeAdvancedStyles(baseCustom, advancedStyles, 'srp');
+            const mergedVdp = mergeAdvancedStyles(baseCustom, advancedStyles, 'vdp');
+
+            css += `.cn-srp-only .demo-cta-custom-${sanitizedType} {\n`;
+            css += `    ${utils.generateCssFromStyles(mergedSrp)};\n`;
+            css += '}\n\n';
+
+            css += `.cn-vdp-only .demo-cta-custom-${sanitizedType} {\n`;
+            css += `    ${utils.generateCssFromStyles(mergedVdp)};\n`;
+            css += '}\n\n';
+        } else {
+            const merged = mergeAdvancedStyles(baseCustom, advancedStyles);
+
+            css += `.demo-cta-custom-${sanitizedType} {\n`;
+            css += `    ${utils.generateCssFromStyles(merged)};\n`;
+            css += '}\n\n';
+        }
 
         css += `.demo-cta-custom-${sanitizedType}:hover {\n`;
         css += `    background-color: ${customStyle.textColor};\n`;
         css += `    color: ${customStyle.backgroundColor};\n`;
+        css += `    border-color: ${customStyle.textColor};\n`;
         css += '}\n\n';
     });
 
