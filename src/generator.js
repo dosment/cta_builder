@@ -394,8 +394,8 @@ function generateCtaAttributes(ctaType, config, ctaLabels, placement) {
         }
     }
 
-    // Always add href for proper anchor behavior
-    attrs += ' href="#"';
+    // Only add href if there's an actual URL destination
+    // (onclick handlers and deeplinks don't need href="#")
 
     // Always add class attribute
     attrs += ` class="${className}"`;
