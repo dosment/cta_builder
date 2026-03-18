@@ -56,6 +56,7 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     css += '    align-items: center;\n';
     css += '    text-align: center;\n';
     css += '    text-decoration: none !important;\n';
+    css += '    font-size: 13px;\n';
     css += '    cursor: pointer;\n';
     css += '    border-style: solid;\n';
     css += '    width: 100%;\n';
