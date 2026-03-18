@@ -55,10 +55,14 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     css += '    justify-content: center;\n';
     css += '    align-items: center;\n';
     css += '    text-align: center;\n';
-    css += '    text-decoration: none;\n';
+    css += '    text-decoration: none !important;\n';
     css += '    cursor: pointer;\n';
     css += '    border-style: solid;\n';
     css += '    width: 100%;\n';
+    css += '}\n\n';
+
+    css += '.demo-cta:hover {\n';
+    css += '    text-decoration: none !important;\n';
     css += '}\n\n';
 
     const styleTypeMap = new Map();
