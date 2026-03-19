@@ -324,6 +324,110 @@ export function deepClone(obj) {
 }
 
 /**
+ * Parse hex color to RGB components
+ */
+function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const full = h.length === 3
+        ? h[0]+h[0]+h[1]+h[1]+h[2]+h[2]
+        : h;
+    return {
+        r: parseInt(full.substr(0, 2), 16),
+        g: parseInt(full.substr(2, 2), 16),
+        b: parseInt(full.substr(4, 2), 16)
+    };
+}
+
+/**
+ * Convert RGB components to hex string
+ */
+function rgbToHex(r, g, b) {
+    const clamp = v => Math.max(0, Math.min(255, Math.round(v)));
+    return '#' + [clamp(r), clamp(g), clamp(b)]
+        .map(v => v.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+/**
+ * Darken a hex color by a percentage (0-100)
+ */
+export function darkenColor(hex, percent = 15) {
+    const { r, g, b } = hexToRgb(hex);
+    const factor = 1 - percent / 100;
+    return rgbToHex(r * factor, g * factor, b * factor);
+}
+
+/**
+ * Lighten a hex color by a percentage (0-100)
+ */
+export function lightenColor(hex, percent = 15) {
+    const { r, g, b } = hexToRgb(hex);
+    const factor = percent / 100;
+    return rgbToHex(r + (255 - r) * factor, g + (255 - g) * factor, b + (255 - b) * factor);
+}
+
+/**
+ * Resolve hover colors based on hover style setting
+ * @param {Object} baseStyles - Base style object with backgroundColor, textColor, borderColor
+ * @param {string} hoverStyle - One of: null/'oem', 'invert', 'darken', 'lighten', 'none', 'custom'
+ * @param {Object} hoverCustomColors - Custom hover colors {backgroundColor, textColor, borderColor}
+ * @returns {Object} {backgroundColor, textColor, borderColor}
+ */
+export function resolveHoverColors(baseStyles, hoverStyle, hoverCustomColors = null) {
+    switch (hoverStyle) {
+        case 'invert':
+            return {
+                backgroundColor: baseStyles.textColor,
+                textColor: baseStyles.backgroundColor,
+                borderColor: baseStyles.textColor
+            };
+        case 'darken':
+            return {
+                backgroundColor: darkenColor(baseStyles.backgroundColor, 15),
+                textColor: baseStyles.textColor,
+                borderColor: darkenColor(baseStyles.borderColor || baseStyles.backgroundColor, 15)
+            };
+        case 'lighten':
+            return {
+                backgroundColor: lightenColor(baseStyles.backgroundColor, 15),
+                textColor: baseStyles.textColor,
+                borderColor: lightenColor(baseStyles.borderColor || baseStyles.backgroundColor, 15)
+            };
+        case 'none':
+            return {
+                backgroundColor: baseStyles.backgroundColor,
+                textColor: baseStyles.textColor,
+                borderColor: baseStyles.borderColor || baseStyles.backgroundColor
+            };
+        case 'custom':
+            if (hoverCustomColors) {
+                return {
+                    backgroundColor: hoverCustomColors.backgroundColor || baseStyles.backgroundColor,
+                    textColor: hoverCustomColors.textColor || baseStyles.textColor,
+                    borderColor: hoverCustomColors.borderColor || baseStyles.borderColor
+                };
+            }
+            // Fall through to OEM default if no custom colors provided
+            return resolveHoverColors(baseStyles, null);
+        default:
+            // OEM default — use OEM hover colors if available, otherwise invert
+            if (baseStyles.hoverBackgroundColor) {
+                return {
+                    backgroundColor: baseStyles.hoverBackgroundColor,
+                    textColor: baseStyles.hoverTextColor || baseStyles.textColor,
+                    borderColor: baseStyles.hoverBorderColor || baseStyles.hoverBackgroundColor
+                };
+            }
+            // Fallback: invert
+            return {
+                backgroundColor: baseStyles.textColor,
+                textColor: baseStyles.backgroundColor,
+                borderColor: baseStyles.textColor
+            };
+    }
+}
+
+/**
  * Check if object is empty
  */
 export function isEmpty(obj) {

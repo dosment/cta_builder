@@ -5,6 +5,7 @@
 
 import * as utils from '../../utils.js';
 import { StyleSelector } from '../components/StyleSelector.js';
+import { TypographyControls } from '../components/TypographyControls.js';
 
 export class StylingStep {
     constructor(appState, previewManager, validationManager) {
@@ -15,6 +16,11 @@ export class StylingStep {
             appState,
             (updatePreview) => this.handleStyleChange(updatePreview),
             previewManager
+        );
+        this.typographyControls = new TypographyControls(
+            appState,
+            () => this.previewManager.updateLivePreview(),
+            () => this.render()
         );
     }
 
@@ -51,6 +57,11 @@ export class StylingStep {
 
             container.appendChild(configItem);
         });
+
+        // Global hover effect controls
+        const hoverItem = utils.createElement('div', { className: 'config-item' });
+        hoverItem.appendChild(this.typographyControls.createHoverControls('buttons'));
+        container.appendChild(hoverItem);
     }
 
     /**

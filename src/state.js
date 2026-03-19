@@ -50,7 +50,9 @@ class AppState {
             marginTop: null,
             marginBottom: null,
             padding: null,
-            textWrap: null
+            textWrap: null,
+            hoverStyle: null,
+            hoverCustomColors: null
         });
 
         return {

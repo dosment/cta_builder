@@ -131,12 +131,31 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
             css += '}\n\n';
         }
 
-        // Hover states (same for both placements)
-        css += `.demo-cta-${styleType}:hover {\n`;
-        css += `    background-color: ${styleData.hoverBackgroundColor};\n`;
-        css += `    color: ${styleData.hoverTextColor};\n`;
-        css += `    border-color: ${styleData.hoverBorderColor || styleData.hoverBackgroundColor};\n`;
-        css += '}\n\n';
+        // Hover states — respect advancedStyles hover setting
+        if (needsSeparateClasses) {
+            // Separate hover for SRP and VDP
+            const srpHover = getHoverColorsForPlacement(styleData, advancedStyles, 'srp');
+            const vdpHover = getHoverColorsForPlacement(styleData, advancedStyles, 'vdp');
+
+            css += `.cn-srp-only .demo-cta-${styleType}:hover {\n`;
+            css += `    background-color: ${srpHover.backgroundColor};\n`;
+            css += `    color: ${srpHover.textColor};\n`;
+            css += `    border-color: ${srpHover.borderColor};\n`;
+            css += '}\n\n';
+
+            css += `.cn-vdp-only .demo-cta-${styleType}:hover {\n`;
+            css += `    background-color: ${vdpHover.backgroundColor};\n`;
+            css += `    color: ${vdpHover.textColor};\n`;
+            css += `    border-color: ${vdpHover.borderColor};\n`;
+            css += '}\n\n';
+        } else {
+            const hoverColors = getHoverColorsForGeneration(styleData, advancedStyles, separateStyling);
+            css += `.demo-cta-${styleType}:hover {\n`;
+            css += `    background-color: ${hoverColors.backgroundColor};\n`;
+            css += `    color: ${hoverColors.textColor};\n`;
+            css += `    border-color: ${hoverColors.borderColor};\n`;
+            css += '}\n\n';
+        }
     });
 
     // Generate custom styles for each CTA with custom styling
@@ -172,11 +191,39 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
             css += '}\n\n';
         }
 
-        css += `.demo-cta-custom-${sanitizedType}:hover {\n`;
-        css += `    background-color: ${customStyle.textColor};\n`;
-        css += `    color: ${customStyle.backgroundColor};\n`;
-        css += `    border-color: ${customStyle.textColor};\n`;
-        css += '}\n\n';
+        // Custom hover — respect advancedStyles hover setting
+        const customBase = {
+            backgroundColor: customStyle.backgroundColor,
+            textColor: customStyle.textColor,
+            borderColor: customStyle.borderColor,
+            // Custom styles don't have OEM hover colors, so default is invert
+            hoverBackgroundColor: customStyle.textColor,
+            hoverTextColor: customStyle.backgroundColor,
+            hoverBorderColor: customStyle.textColor
+        };
+        if (needsSeparateClasses) {
+            const srpHover = getHoverColorsForPlacement(customBase, advancedStyles, 'srp');
+            const vdpHover = getHoverColorsForPlacement(customBase, advancedStyles, 'vdp');
+
+            css += `.cn-srp-only .demo-cta-custom-${sanitizedType}:hover {\n`;
+            css += `    background-color: ${srpHover.backgroundColor};\n`;
+            css += `    color: ${srpHover.textColor};\n`;
+            css += `    border-color: ${srpHover.borderColor};\n`;
+            css += '}\n\n';
+
+            css += `.cn-vdp-only .demo-cta-custom-${sanitizedType}:hover {\n`;
+            css += `    background-color: ${vdpHover.backgroundColor};\n`;
+            css += `    color: ${vdpHover.textColor};\n`;
+            css += `    border-color: ${vdpHover.borderColor};\n`;
+            css += '}\n\n';
+        } else {
+            const customHoverColors = getHoverColorsForGeneration(customBase, advancedStyles, separateStyling);
+            css += `.demo-cta-custom-${sanitizedType}:hover {\n`;
+            css += `    background-color: ${customHoverColors.backgroundColor};\n`;
+            css += `    color: ${customHoverColors.textColor};\n`;
+            css += `    border-color: ${customHoverColors.borderColor};\n`;
+            css += '}\n\n';
+        }
     });
 
     // Advanced styles are now merged into OEM classes above, no separate override classes needed
@@ -302,6 +349,25 @@ function generateCss(oemData, selectedCtas, ctaConfigs, advancedStyles) {
     css += '</style>';
 
     return css;
+}
+
+/**
+ * Get hover colors for generation based on advancedStyles settings
+ * Used when separate styling is disabled (unified buttons)
+ */
+function getHoverColorsForGeneration(baseStyles, advancedStyles, separateStyling) {
+    const placement = separateStyling ? 'srp' : 'buttons';
+    return getHoverColorsForPlacement(baseStyles, advancedStyles, placement);
+}
+
+/**
+ * Get hover colors for a specific placement
+ */
+function getHoverColorsForPlacement(baseStyles, advancedStyles, placement) {
+    const styles = advancedStyles?.[placement] || {};
+    const hoverStyle = styles.hoverStyle || null;
+    const hoverCustomColors = styles.hoverCustomColors || null;
+    return utils.resolveHoverColors(baseStyles, hoverStyle, hoverCustomColors);
 }
 
 /**

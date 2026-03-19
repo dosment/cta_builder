@@ -12,7 +12,8 @@ export class AdvancedStylingStep {
         this.previewManager = previewManager;
         this.typographyControls = new TypographyControls(
             appState,
-            () => this.handleControlChange()
+            () => this.handleControlChange(),
+            () => this.handleReRender()
         );
     }
 
@@ -118,6 +119,14 @@ export class AdvancedStylingStep {
      * Handle control change
      */
     handleControlChange() {
+        this.previewManager.updateLivePreview();
+    }
+
+    /**
+     * Handle re-render (e.g., when hover style toggles custom color pickers)
+     */
+    handleReRender() {
+        this.render();
         this.previewManager.updateLivePreview();
     }
 }

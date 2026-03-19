@@ -127,14 +127,17 @@ export class PreviewManager {
             style: this.buildButtonStyle(appliedStyles)
         }, `Sample ${oemData.name} Button`);
 
-        // Hover effects
+        // Hover effects — respect advancedStyles hover setting
+        const sampleHover = this.getResolvedHoverColors(styles, 'srp');
         sampleButton.onmouseenter = () => {
-            sampleButton.style.backgroundColor = styles.hoverBackgroundColor;
-            sampleButton.style.color = styles.hoverTextColor;
+            sampleButton.style.backgroundColor = sampleHover.backgroundColor;
+            sampleButton.style.color = sampleHover.textColor;
+            sampleButton.style.borderColor = sampleHover.borderColor;
         };
         sampleButton.onmouseleave = () => {
             sampleButton.style.backgroundColor = appliedStyles.backgroundColor;
             sampleButton.style.color = appliedStyles.textColor;
+            sampleButton.style.borderColor = appliedStyles.borderColor;
         };
 
         container.appendChild(sampleButton);
@@ -217,13 +220,17 @@ export class PreviewManager {
 
             const baseStyles = styles;
 
+            // Hover effects — respect advancedStyles hover setting
+            const hoverColors = this.getResolvedHoverColors(baseStyles, placement);
             button.onmouseenter = () => {
-                button.style.backgroundColor = baseStyles.hoverBackgroundColor;
-                button.style.color = baseStyles.hoverTextColor;
+                button.style.backgroundColor = hoverColors.backgroundColor;
+                button.style.color = hoverColors.textColor;
+                button.style.borderColor = hoverColors.borderColor;
             };
             button.onmouseleave = () => {
                 button.style.backgroundColor = appliedStyles.backgroundColor;
                 button.style.color = appliedStyles.textColor;
+                button.style.borderColor = appliedStyles.borderColor;
             };
 
             // Wrap button in a div to match generated HTML structure
@@ -297,6 +304,18 @@ export class PreviewManager {
             whiteSpace: advanced.textWrap === 'nowrap' ? 'nowrap' : 'normal',
             transition: baseStyles.transition
         };
+    }
+
+    /**
+     * Get resolved hover colors based on advancedStyles hover setting
+     */
+    getResolvedHoverColors(baseStyles, placement) {
+        const separateStyling = this.appState.getSeparateStyling();
+        const effectivePlacement = separateStyling ? placement : 'buttons';
+        const advanced = this.appState.data.advancedStyles?.[effectivePlacement] || {};
+        const hoverStyle = advanced.hoverStyle || null;
+        const hoverCustomColors = advanced.hoverCustomColors || null;
+        return utils.resolveHoverColors(baseStyles, hoverStyle, hoverCustomColors);
     }
 
     /**

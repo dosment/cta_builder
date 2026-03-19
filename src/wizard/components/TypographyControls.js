@@ -6,9 +6,10 @@
 import * as utils from '../../utils.js';
 
 export class TypographyControls {
-    constructor(appState, onControlChange) {
+    constructor(appState, onControlChange, onReRender = null) {
         this.appState = appState;
         this.onControlChange = onControlChange;
+        this.onReRender = onReRender;
     }
 
     /**
@@ -196,6 +197,153 @@ export class TypographyControls {
         wrapper.appendChild(bottomRow);
 
         return wrapper;
+    }
+
+    /**
+     * Create hover style controls for a placement
+     */
+    createHoverControls(placement) {
+        const wrapper = utils.createElement('div', { className: 'config-group config-card' });
+        const title = utils.createElement('div', { className: 'config-subtitle' }, 'Hover Effect');
+        wrapper.appendChild(title);
+
+        const row = utils.createElement('div', { className: 'config-grid config-grid-selects' });
+
+        const hoverOptions = [
+            { value: '', label: 'OEM Default' },
+            { value: 'invert', label: 'Invert Colors' },
+            { value: 'darken', label: 'Darken' },
+            { value: 'lighten', label: 'Lighten' },
+            { value: 'none', label: 'None' },
+            { value: 'custom', label: 'Custom Colors' }
+        ];
+
+        const hoverField = this.createPlacementSelect(
+            placement,
+            'hoverStyle',
+            'Hover Style',
+            hoverOptions
+        );
+
+        // Override onchange to trigger re-render when switching to/from 'custom'
+        const select = hoverField.querySelector('select');
+        if (select) {
+            const originalOnchange = select.onchange;
+            select.onchange = (e) => {
+                const prevValue = this.getAdvancedStylesValue(placement, 'hoverStyle');
+                if (originalOnchange) originalOnchange(e);
+                const newValue = e.target.value || null;
+                // Initialize default custom colors when switching to 'custom'
+                if (newValue === 'custom' && !this.getAdvancedStylesValue(placement, 'hoverCustomColors')) {
+                    this.appState.updateAdvancedStyles(placement, {
+                        hoverCustomColors: {
+                            backgroundColor: '#333333',
+                            textColor: '#ffffff',
+                            borderColor: '#333333'
+                        }
+                    });
+                }
+                // Re-render step if toggling custom color pickers visibility
+                if ((prevValue === 'custom') !== (newValue === 'custom')) {
+                    if (this.onReRender) this.onReRender();
+                }
+            };
+        }
+
+        row.appendChild(hoverField);
+        wrapper.appendChild(row);
+
+        // Show custom color pickers when "Custom" is selected
+        const currentValue = this.getAdvancedStylesValue(placement, 'hoverStyle');
+        if (currentValue === 'custom') {
+            const colorRow = this.createHoverColorInputs(placement);
+            wrapper.appendChild(colorRow);
+        }
+
+        return wrapper;
+    }
+
+    /**
+     * Create custom hover color picker inputs
+     */
+    createHoverColorInputs(placement) {
+        const colorRow = utils.createElement('div', {
+            className: 'custom-color-row',
+            style: 'display: flex; gap: 12px; margin-top: 10px;'
+        });
+
+        const currentColors = this.getAdvancedStylesValue(placement, 'hoverCustomColors') || {
+            backgroundColor: '#333333',
+            textColor: '#ffffff',
+            borderColor: '#333333'
+        };
+
+        const colorConfigs = [
+            { key: 'backgroundColor', label: 'Background:', initial: currentColors.backgroundColor },
+            { key: 'textColor', label: 'Text:', initial: currentColors.textColor },
+            { key: 'borderColor', label: 'Border:', initial: currentColors.borderColor }
+        ];
+
+        colorConfigs.forEach(({ key, label, initial }) => {
+            const field = utils.createElement('div', {
+                className: 'config-field',
+                style: 'display: flex; flex-direction: column; gap: 4px; flex: 1;'
+            });
+            const labelEl = utils.createElement('label', {}, label);
+            const inputWrapper = utils.createElement('div', {
+                style: 'display: flex; gap: 8px; align-items: center;'
+            });
+
+            const colorPicker = utils.createElement('input', {
+                type: 'color',
+                id: `hover-${key}-picker-${placement}`,
+                value: initial,
+                style: 'width: 60px; height: 40px; cursor: pointer;'
+            });
+
+            const colorText = utils.createElement('input', {
+                type: 'text',
+                id: `hover-${key}-text-${placement}`,
+                value: initial.toUpperCase(),
+                placeholder: initial,
+                style: 'width: 110px; text-transform: uppercase;'
+            });
+
+            const updateColor = (value) => {
+                const existing = this.getAdvancedStylesValue(placement, 'hoverCustomColors') || {
+                    backgroundColor: '#333333',
+                    textColor: '#ffffff',
+                    borderColor: '#333333'
+                };
+                this.appState.updateAdvancedStyles(placement, {
+                    hoverCustomColors: { ...existing, [key]: value }
+                });
+                if (this.onControlChange) {
+                    this.onControlChange();
+                }
+            };
+
+            colorPicker.onchange = (e) => {
+                colorText.value = e.target.value.toUpperCase();
+                updateColor(e.target.value);
+            };
+
+            colorText.oninput = (e) => {
+                const value = e.target.value.trim();
+                if (/^#[0-9A-Fa-f]{6}$/.test(value) || /^#[0-9A-Fa-f]{3}$/.test(value)) {
+                    colorPicker.value = value;
+                    updateColor(value);
+                }
+            };
+
+            inputWrapper.appendChild(colorPicker);
+            inputWrapper.appendChild(colorText);
+            field.appendChild(labelEl);
+            field.appendChild(inputWrapper);
+            colorRow.appendChild(field);
+        });
+
+        return colorRow;
     }
 
     /**
